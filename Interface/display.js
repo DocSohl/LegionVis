@@ -33,7 +33,7 @@ function Update(){
     var procs = d3.set(timedata.map(function(d){return d.proc_id;})).values();
 
     var color = d3.scale.ordinal().domain(funcs)
-        .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+        .range(['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928']);
 
     var xAxis = d3.svg.axis().scale(x).orient("bottom");
     var yAxis = d3.svg.axis().scale(y0).orient("left");

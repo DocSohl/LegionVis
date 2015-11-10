@@ -20,6 +20,10 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/display.html', 'r'),self.wfile)
+	elif self.path == "/display.js":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/display.js', 'r'),self.wfile)	    
 	elif reduce(lambda a, b: a or b, (self.path.startswith(k) for k in STATICS)):
 		SimpleHTTPRequestHandler.do_GET(self)
             
