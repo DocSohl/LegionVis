@@ -100,7 +100,6 @@ function Update(){
 
     var zoom = d3.behavior.zoom()
         .x(x)
-        .scaleExtent([1, 10])
         .on("zoom", zoomed);
     svg.call(zoom);
     /*TODO: Get the zoom to work outside of the X axis.*/
