@@ -11,7 +11,7 @@ var timedata = [
     {'task_id': 5, 'proc_id': 1, 'create': 21071.925, 'stop': 22917.987, 'start': 21983.541, 'func_id': 10, 'ready': 21930.39}
 ];
 
-
+var svg,xAxis;
 
 
 function Update(){
@@ -19,15 +19,15 @@ function Update(){
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
-    var svg = d3.select("#timeline")
+    var x = d3.scale.linear().domain([0,d3.max(timedata,function(d){return d.stop;})]).range([0,width]);
+    var y0 = d3.scale.ordinal().rangeRoundBands([0,height],0.1);
+    var y1 = d3.scale.ordinal();
+
+    svg = d3.select("#timeline")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var x = d3.scale.linear().domain([0,d3.max(timedata,function(d){return d.stop;})]).range([0,width])
-    var y0 = d3.scale.ordinal().rangeRoundBands([0,height],0.1);
-    var y1 = d3.scale.ordinal();
 
     var funcs = d3.set(timedata.map(function(d){return d.func_id;})).values();
     var procs = d3.set(timedata.map(function(d){return d.proc_id;})).values();
@@ -35,7 +35,7 @@ function Update(){
     var color = d3.scale.ordinal().domain(funcs)
         .range(['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928']);
 
-    var xAxis = d3.svg.axis().scale(x).orient("bottom");
+    xAxis = d3.svg.axis().scale(x).orient("bottom");
     var yAxis = d3.svg.axis().scale(y0).orient("left");
 
     y0.domain(timedata.map(function(d){return d.proc_id;}));
@@ -50,11 +50,23 @@ function Update(){
         .attr("class","y axis")
         .call(yAxis);
 
+    /*TODO: Make divisions more obvious with horizontal lines*/
+
     var tasks = svg.selectAll(".task")
         .data(procs)
         .enter().append("g")
         .attr("class","g")
         .attr("transform",function(d){return "translate(0,"+y0(d)+")";});
+
+    /*D3 tip code from http://bl.ocks.org/Caged/6476579 .
+     Feel free to fiddle with this.*/
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+            return "<strong>Task_ID:</strong> <span style='color:red'>" + d.task_id + "</span>";
+        });
+    svg.call(tip);
 
     tasks.selectAll("rect")
         .data(function(d){return timedata.filter(function(e){return d== e.proc_id;})})
@@ -63,7 +75,9 @@ function Update(){
         .attr("y",function(d){return y1(d.func_id);})
         .attr("x",function(d){return x(d.start);})
         .attr("width",function(d){return x(d.stop) - x(d.start);})
-        .style("fill",function(d){return color(d.func_id);});
+        .style("fill",function(d){return color(d.func_id);})
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
 
     var legend = svg.selectAll(".legend")
         .data(funcs.slice().reverse())
@@ -84,8 +98,21 @@ function Update(){
         .style("text-anchor", "end")
         .text(function(d) { return d; });
 
+    var zoom = d3.behavior.zoom()
+        .x(x)
+        .scaleExtent([1, 10])
+        .on("zoom", zoomed);
+    svg.call(zoom);
+    /*TODO: Get the zoom to work outside of the X axis.*/
 }
 
 
+function zoomed() {
+    svg.select(".x.axis").call(xAxis);
+    /*TODO: Get it to scale everything else.*/
+    console.log(d3.event.scale );
+}
+
+/*TODO: add dragging*/
 
 Update();

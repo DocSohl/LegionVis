@@ -13,7 +13,7 @@ def analyze(data):
             tasks.append({
                 "task_id" : long(match.group('tid')),
                 "func_id" : int(match.group('fid')),
-                "proc_id" : int(match.group('pid'),16),
+                "proc_id" : int(match.group('pid'), 16),
                 "create" : long(match.group('create'))/1000,
                 "ready" : long(match.group('ready'))/1000,
                 "start" : long(match.group('start'))/1000,
@@ -26,7 +26,7 @@ def analyze(data):
 
 if __name__=="__main__":
     # Load the file
-    test = open("data/PROF.log","r")
+    test = open("data/PROF.log", "r")
     testdata = test.readlines()
     result = analyze(testdata)
     print result
