@@ -43,6 +43,7 @@
 .processor {
     fill: none;
     stroke: black;
+    stroke-width: 2px;
 }
 
 .task {

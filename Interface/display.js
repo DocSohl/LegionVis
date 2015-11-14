@@ -1,5 +1,5 @@
 
-var svg,xAxis;
+var svg, xAxis, taskcontainer, zoom, width, height;
 
 function scanData(data){
     data.sort(function(a,b){return a.start - b.start;});
@@ -37,19 +37,30 @@ function scanData(data){
 function Init(){
     d3.json("tasks.json",function(timedata){
         var maxStacks = scanData(timedata);
-        var margin = {top: 20, right: 20, bottom: 30, left: 120},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+        var margin = {top: 20, right: 20, bottom: 30, left: 120};
+        width = 960 - margin.left - margin.right;
+        height = 500 - margin.top - margin.bottom;
 
         var x = d3.scale.linear().domain([0,d3.max(timedata,function(d){return d.stop;})]).range([0,width]);
         var y0 = d3.scale.ordinal().rangeRoundBands([0,height],0.1);
         //var y1 = d3.scale.ordinal();
 
+        zoom = d3.behavior.zoom()
+            .scaleExtent([1,10])
+            .x(x)
+            .on("zoom", zoomed);
+
         svg = d3.select("#timeline")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")").call(zoom);
+
+        svg.append("rect")
+            .attr("width",width)
+            .attr("height",height)
+            .style("fill","none")
+            .style("pointer-events","all");
 
         var funcs = d3.set(timedata.map(function(d){return d.func_id;})).values();
         var stacks = d3.set(timedata.map(function(d){return d.stack;})).values();
@@ -74,13 +85,25 @@ function Init(){
             .call(xAxis);
 
 
-        /*TODO: Make divisions more obvious with horizontal lines*/
+        taskcontainer = svg.append("g");
 
-        var tasks = svg.selectAll(".task")
+        var clip = svg.append("defs").append("svg:clipPath")
+            .attr("id", "clip")
+            .append("svg:rect")
+            .attr("id", "clip-rect")
+            .attr("x", "0")
+            .attr("y", "0")
+            .attr("width", width)
+            .attr("height", height);
+
+        var tasks = taskcontainer.selectAll(".task")
             .data(procs)
             .enter().append("g")
             .attr("class","g")
             .attr("transform",function(d){return "translate(0,"+y0(d)+")";});
+
+
+
 
         tasks.append("rect")
             .attr("class","processor")
@@ -89,12 +112,18 @@ function Init(){
             .attr("width",width+2)
             .attr("height",y0.rangeBand()+2);
 
+
         tasks.append("text")
             .attr("class","proc-label")
             .style("text-anchor", "end")
             .attr("x",-10)
             .attr("y",y0.rangeBand()/2)
             .text(function(d){return "Processor #"+ d;});
+
+        var clipg = tasks.append("g")
+            .attr("clip-path","url(#clip)");
+
+        var subtasks = clipg.append("g").attr("class","subtasks");
 
         /*D3 tip code from http://bl.ocks.org/Caged/6476579 .
          Feel free to fiddle with this.*/
@@ -106,7 +135,9 @@ function Init(){
             });
         svg.call(tip);
 
-        tasks.selectAll(".task")
+
+
+        subtasks.selectAll(".task")
             .data(function(d){return timedata.filter(function(e){return d== e.proc_id;})})
             .enter().append("rect").attr("class","task")
             .attr("height",function(d){return y1s[d.proc_id].rangeBand();})
@@ -142,19 +173,18 @@ function Init(){
             .style("text-anchor", "start")
             .text(function(d) { return d; });
 
-        var zoom = d3.behavior.zoom()
-            .x(x)
-            .on("zoom", zoomed);
-        svg.call(zoom);
+
         /*TODO: Get the zoom to work outside of the X axis.*/
     });
 }
 
 
 function zoomed() {
+    xmov = Math.max(Math.min(d3.event.translate[0],0),-width*d3.event.scale + width/d3.event.scale);
+    console.log(d3.event.scale+" - "+xmov);
+    zoom.translate([xmov,0]);
     svg.select(".x.axis").call(xAxis);
-    /*TODO: Get it to scale everything else.*/
-    console.log(d3.event.scale );
+    taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + d3.event.scale + ",1)");
 }
 
 /*TODO: add dragging*/
