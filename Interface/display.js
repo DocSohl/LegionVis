@@ -37,7 +37,7 @@ function scanData(data){
 function Init(){
     d3.json("tasks.json",function(timedata){
         var maxStacks = scanData(timedata);
-        var margin = {top: 20, right: 20, bottom: 30, left: 40},
+        var margin = {top: 20, right: 20, bottom: 30, left: 120},
             width = 960 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom;
 
@@ -59,7 +59,6 @@ function Init(){
             .range(['#a6cee3','#b2df8a','#fb9a99','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928']);
 
         xAxis = d3.svg.axis().scale(x).orient("bottom");
-        var yAxis = d3.svg.axis().scale(y0).orient("left");
 
         y0.domain(timedata.map(function(d){return d.proc_id;}));
         y1s = {};
@@ -74,9 +73,6 @@ function Init(){
             .attr("transform","translate(0,"+height+")")
             .call(xAxis);
 
-        svg.append("g")
-            .attr("class","y axis")
-            .call(yAxis);
 
         /*TODO: Make divisions more obvious with horizontal lines*/
 
@@ -86,20 +82,33 @@ function Init(){
             .attr("class","g")
             .attr("transform",function(d){return "translate(0,"+y0(d)+")";});
 
+        tasks.append("rect")
+            .attr("class","processor")
+            .attr("x",-1)
+            .attr("y",-1)
+            .attr("width",width+2)
+            .attr("height",y0.rangeBand()+2);
+
+        tasks.append("text")
+            .attr("class","proc-label")
+            .style("text-anchor", "end")
+            .attr("x",-10)
+            .attr("y",y0.rangeBand()/2)
+            .text(function(d){return "Processor #"+ d;});
+
         /*D3 tip code from http://bl.ocks.org/Caged/6476579 .
          Feel free to fiddle with this.*/
         var tip = d3.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function(d) {
-                //return "<strong>Func_ID:</strong> <span style='color:red'>" + d.func_id + "</span>";
-                return "<strong>Stack:</strong> <span style='color:red'>" + d.stack + "</span>";
+                return "<strong>Func_ID:</strong> <span style='color:red'>" + d.func_id + "</span>";
             });
         svg.call(tip);
 
-        tasks.selectAll("rect")
+        tasks.selectAll(".task")
             .data(function(d){return timedata.filter(function(e){return d== e.proc_id;})})
-            .enter().append("rect")
+            .enter().append("rect").attr("class","task")
             .attr("height",function(d){return y1s[d.proc_id].rangeBand();})
             .attr("y",function(d){return y1s[d.proc_id](d.stack);})
             .attr("x",function(d){return x(d.start);})
@@ -109,14 +118,16 @@ function Init(){
             .on('mouseout', tip.hide);
 
         var svglegend = d3.select("#legend")
-            .attr("width",100)
-            .attr("height",20*funcs.length);
+            .attr("width",150)
+            .attr("height",20*funcs.length+30);
+
+        svglegend.append("text").attr("y",20).attr("x",50).text("Function ID");
 
         var legend = svglegend.selectAll(".legend")
             .data(funcs.slice().reverse())
             .enter().append("g")
             .attr("class", "legend")
-            .attr("transform", function(d, i) { return "translate(50," + i * 20 + ")"; });
+            .attr("transform", function(d, i) { return "translate(50," + ((i+1) * 20 + 10) + ")"; });
 
         legend.append("rect")
             .attr("x", 0)

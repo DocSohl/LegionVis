@@ -39,3 +39,17 @@
     top: 100%;
     left: 0;
 }
+
+.processor {
+    fill: none;
+    stroke: black;
+}
+
+.task {
+    stroke-width: 1px;
+    stroke: none;
+}
+
+text {
+    font-family: Sans-serif;
+}
