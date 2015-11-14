@@ -22,6 +22,10 @@ def analyze(data):
     return tasks
 
 
+def fromFile(fname):
+    test = open(fname, "r")
+    testdata = test.readlines()
+    return analyze(testdata)
 
 
 if __name__=="__main__":

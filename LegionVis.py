@@ -2,6 +2,8 @@
 from BaseHTTPServer import HTTPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler 
 from shutil import copyfileobj
+import ProcessData
+import json
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -16,21 +18,25 @@ class Handler(SimpleHTTPRequestHandler):
         )
         print form
     def do_GET(self):
-	STATICS = ('/Data','/Interface')
+        STATICS = ('/Data','/Interface')
         if self.path == "/":
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/display.html', 'r'),self.wfile)
-	elif self.path == "/display.js":
+        elif self.path == "/display.js":
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/display.js', 'r'),self.wfile)	
-	elif self.path == "/style.css":
+        elif self.path == "/style.css":
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/style.css', 'r'),self.wfile)	    
-	elif reduce(lambda a, b: a or b, (self.path.startswith(k) for k in STATICS)):
-		SimpleHTTPRequestHandler.do_GET(self)
+        elif self.path == "/tasks.json":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            self.json_out(ProcessData.fromFile("data/PROF.log"))    
+        elif reduce(lambda a, b: a or b, (self.path.startswith(k) for k in STATICS)):
+            SimpleHTTPRequestHandler.do_GET(self)
 
 if __name__=="__main__":
     server_address = ('', 8001)
