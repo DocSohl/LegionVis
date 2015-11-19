@@ -1,5 +1,6 @@
 
 var svg, xAxis, taskcontainer, zoom, width, height, names, timedata, color;
+var histFirst = true;
 
 function scanData(data){
     data.sort(function(a,b){return a.start - b.start;});
@@ -185,17 +186,25 @@ function updateHist(){
     var bins = [];
     var binned = {};
     var maxval = 0;
+    var curChecked = document.getElementById("histcount").checked;
     timedata.forEach(function(d){
         var val = d.func_id;
         if(!binned[val]){
             binned[val] = 0;
             bins.push(val);
         }
-        binned[val]++;
+        if(curChecked)
+            binned[val]++;
+        else{
+            binned[val] += d.stop - d.start;
+        }
         maxval = Math.max(maxval,binned[val]);
     });
 
-    var margin = {top: 20, right: 30, bottom: 30, left: 40};
+    var margin = {top: 20, right: 30, bottom: 30, left: 60};
+    if(maxval>100000){
+        margin.left = 80;
+    }
     var histwidth = 500 - margin.left - margin.right;
     var histheight = 500 - margin.top - margin.bottom;
 
@@ -208,27 +217,55 @@ function updateHist(){
     var histxAxis = d3.svg.axis().scale(x).orient("bottom");
     var histyAxis = d3.svg.axis().scale(y).orient("left");
 
-    var chart = d3.select("#hist")
-        .attr("width",histwidth + margin.left + margin.right)
-        .attr("height",histheight + margin.top + margin.bottom)
-        .append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+    var chart;
+    if(histFirst){
+        chart = d3.select("#hist")
+            .attr("width",histwidth + margin.left + margin.right)
+            .attr("height",histheight + margin.top + margin.bottom)
+            .append("g").attr("class","contents").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-    chart.append("g").attr("class","x axis")
-        .attr("transform","translate(0," + histheight + ")")
-        .call(histxAxis);
+        chart.append("g").attr("class","x axis")
+            .attr("transform","translate(0," + histheight + ")")
+            .call(histxAxis);
 
-    chart.append("g").attr("class","y axis")
-        .call(histyAxis);
+        chart.append("g").attr("class","y axis")
+            .call(histyAxis);
 
-    chart.selectAll(".bar").data(bins)
-        .enter().append("rect").attr("class","bar")
+        chart.append("text").attr("class","yLabel")
+            .attr("transform","rotate(-90)")
+            .attr("y",-margin.left)
+            .attr("x",-histheight/2)
+            .attr("dy","1em")
+            .style("text-anchor","middle")
+            .text("Count");
+
+        histFirst = false;
+    }
+    else{
+        chart = d3.select("#hist").select(".contents");
+        chart.transition()
+            .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+        chart.select(".x.axis").transition().call(histxAxis);
+        chart.select(".y.axis").transition().call(histyAxis);
+        if(curChecked) {
+            chart.select(".yLabel").transition().attr("y",-margin.left).text("Count");
+        }
+        else{
+            chart.select(".yLabel").transition().attr("y",-margin.left).text("Total Time (\u03BCs)");
+        }
+    }
+
+    var bars = chart.selectAll(".bar").data(bins);
+
+    bars.enter().append("rect").attr("class","bar");
+
+    bars.transition()
         .attr("x",function(d){return x(names[d]);})
         .attr("y",function(d){return y(binned[d]);})
         .attr("height",function(d){return histheight - y(binned[d]);})
         .attr("width", x.rangeBand())
         .style("fill",function(d){return color(d);});
 }
-
 
 function zoomed() {
     xmov = Math.max(Math.min(d3.event.translate[0],0),-width*d3.event.scale + width);

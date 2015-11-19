@@ -12,6 +12,11 @@
             <svg id="timeline"></svg>
         </div>
         <div style="flex-grow: 1;">
+            <div id="histadjust">
+                <label class="count"><input type="radio" name="toggle" onchange="updateHist();" id="histcount" checked><span>Count</span></label>
+                <label class="time"><input type="radio" name="toggle" onchange="updateHist();" id="histtime"><span>Time</span></label>
+            </div>
+            <br/>
             <svg id="hist"></svg><br/>
             <h3>Task Properties</h3>
             <div id="properties">
