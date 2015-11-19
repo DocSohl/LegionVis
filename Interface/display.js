@@ -38,7 +38,7 @@ function Init(){
     d3.json("tasks.json",function(timedata){
         var maxStacks = scanData(timedata);
         var margin = {top: 20, right: 20, bottom: 30, left: 120};
-        width = 960 - margin.left - margin.right;
+        width = 1200 - margin.left - margin.right;
         height = 800 - margin.top - margin.bottom;
 
         var x = d3.scale.linear().domain([0,d3.max(timedata,function(d){return d.stop;})]).range([0,width]);

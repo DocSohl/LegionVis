@@ -7,7 +7,18 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <svg id="timeline"></svg><br />
+    <div style="width: 100%; display: flex;">
+            <div style="width: 1300px;">
+                <svg id="timeline"></svg>
+            </div>
+            <div style="flex-grow: 1;">
+                <h3>Task Properties</h3>
+                <div id="properties">
+                    Please select a task in the main view.
+                </div>
+            </div>
+    </div>
+    <br />
     <svg id="legend"></svg>
     <script src="display.js"></script>
 </body>
