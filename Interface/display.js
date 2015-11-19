@@ -1,5 +1,5 @@
 
-var svg, xAxis, taskcontainer, zoom, width, height, names;
+var svg, xAxis, taskcontainer, zoom, width, height, names, timedata, color;
 
 function scanData(data){
     data.sort(function(a,b){return a.start - b.start;});
@@ -36,7 +36,7 @@ function scanData(data){
 
 function Init(){
     d3.json("tasks.json",function(data){
-        var timedata = data[0];
+        timedata = data[0];
         names = data[1];
         var maxStacks = scanData(timedata);
         var margin = {top: 20, right: 20, bottom: 30, left: 120};
@@ -68,7 +68,7 @@ function Init(){
         var stacks = d3.set(timedata.map(function(d){return d.stack;})).values();
         var procs = d3.set(timedata.map(function(d){return d.proc_id;})).values();
 
-        var color = d3.scale.ordinal().domain(funcs)
+        color = d3.scale.ordinal().domain(funcs)
             .range(['#a6cee3','#b2df8a','#fb9a99','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928']);
 
         xAxis = d3.svg.axis().scale(x).orient("bottom");
@@ -176,9 +176,57 @@ function Init(){
             .style("text-anchor", "start")
             .text(function(d) { return names[d]; });
 
-
+        updateHist();
 
     });
+}
+
+function updateHist(){
+    var bins = [];
+    var binned = {};
+    var maxval = 0;
+    timedata.forEach(function(d){
+        var val = d.func_id;
+        if(!binned[val]){
+            binned[val] = 0;
+            bins.push(val);
+        }
+        binned[val]++;
+        maxval = Math.max(maxval,binned[val]);
+    });
+
+    var margin = {top: 20, right: 30, bottom: 30, left: 40};
+    var histwidth = 500 - margin.left - margin.right;
+    var histheight = 500 - margin.top - margin.bottom;
+
+
+    var x = d3.scale.ordinal().rangeRoundBands([0,histwidth],0.1)
+        .domain(bins.map(function(d){return names[d];}));
+    var y = d3.scale.linear().range([histheight,0])
+        .domain([0,maxval]);
+
+    var histxAxis = d3.svg.axis().scale(x).orient("bottom");
+    var histyAxis = d3.svg.axis().scale(y).orient("left");
+
+    var chart = d3.select("#hist")
+        .attr("width",histwidth + margin.left + margin.right)
+        .attr("height",histheight + margin.top + margin.bottom)
+        .append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+    chart.append("g").attr("class","x axis")
+        .attr("transform","translate(0," + histheight + ")")
+        .call(histxAxis);
+
+    chart.append("g").attr("class","y axis")
+        .call(histyAxis);
+
+    chart.selectAll(".bar").data(bins)
+        .enter().append("rect").attr("class","bar")
+        .attr("x",function(d){return x(names[d]);})
+        .attr("y",function(d){return y(binned[d]);})
+        .attr("height",function(d){return histheight - y(binned[d]);})
+        .attr("width", x.rangeBand())
+        .style("fill",function(d){return color(d);});
 }
 
 
