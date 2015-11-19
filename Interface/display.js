@@ -39,7 +39,7 @@ function Init(){
         var maxStacks = scanData(timedata);
         var margin = {top: 20, right: 20, bottom: 30, left: 120};
         width = 960 - margin.left - margin.right;
-        height = 500 - margin.top - margin.bottom;
+        height = 800 - margin.top - margin.bottom;
 
         var x = d3.scale.linear().domain([0,d3.max(timedata,function(d){return d.stop;})]).range([0,width]);
         var y0 = d3.scale.ordinal().rangeRoundBands([0,height],0.1);
@@ -174,19 +174,17 @@ function Init(){
             .text(function(d) { return d; });
 
 
-        /*TODO: Get the zoom to work outside of the X axis.*/
+
     });
 }
 
 
 function zoomed() {
-    xmov = Math.max(Math.min(d3.event.translate[0],0),-width*d3.event.scale + width/d3.event.scale);
-    console.log(d3.event.scale+" - "+xmov);
+    xmov = Math.max(Math.min(d3.event.translate[0],0),-width*d3.event.scale + width);
     zoom.translate([xmov,0]);
     svg.select(".x.axis").call(xAxis);
     taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + d3.event.scale + ",1)");
 }
 
-/*TODO: add dragging*/
 
 Init();
