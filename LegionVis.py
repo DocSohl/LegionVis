@@ -30,7 +30,11 @@ class Handler(SimpleHTTPRequestHandler):
         elif self.path == "/style.css":
             self.send_response(200, "OKAY")
             self.end_headers()
-            copyfileobj(open('Interface/style.css', 'r'),self.wfile)	    
+            copyfileobj(open('Interface/style.css', 'r'),self.wfile)		
+        elif self.path == "/favicon.ico":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/favicon.ico', 'r'),self.wfile)    
         elif self.path == "/tasks.json":
             self.send_response(200, "OKAY")
             self.end_headers()
@@ -39,6 +43,6 @@ class Handler(SimpleHTTPRequestHandler):
             SimpleHTTPRequestHandler.do_GET(self)
 
 if __name__=="__main__":
-    server_address = ('', 8001)
+    server_address = ('', 80)
     httpd = HTTPServer(server_address, Handler)
     httpd.serve_forever()
