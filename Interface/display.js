@@ -1,5 +1,5 @@
 
-var svg, xAxis, taskcontainer, zoom, width, height;
+var svg, xAxis, taskcontainer, zoom, width, height, names;
 
 function scanData(data){
     data.sort(function(a,b){return a.start - b.start;});
@@ -35,7 +35,9 @@ function scanData(data){
 
 
 function Init(){
-    d3.json("tasks.json",function(timedata){
+    d3.json("tasks.json",function(data){
+        var timedata = data[0];
+        names = data[1];
         var maxStacks = scanData(timedata);
         var margin = {top: 20, right: 20, bottom: 30, left: 120};
         width = 1200 - margin.left - margin.right;
@@ -131,7 +133,7 @@ function Init(){
             .attr('class', 'd3-tip')
             .offset([-10, 0])
             .html(function(d) {
-                return "<strong>Func_ID:</strong> <span style='color:red'>" + d.func_id + "</span>";
+                return "<strong>Func_ID:</strong> <span style='color:red'>" + names[d.func_id] + "</span>";
             });
         svg.call(tip);
 
@@ -150,13 +152,13 @@ function Init(){
             .on('mouseup',taskClicked);
 
         var svglegend = d3.select("#legend")
-            .attr("width",150)
+            .attr("width",400)
             .attr("height",20*funcs.length+30);
 
-        svglegend.append("text").attr("y",20).attr("x",50).text("Function ID");
+        svglegend.append("text").attr("y",20).attr("x",50).text("Task Name");
 
         var legend = svglegend.selectAll(".legend")
-            .data(funcs.slice().reverse())
+            .data(funcs.slice())
             .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function(d, i) { return "translate(50," + ((i+1) * 20 + 10) + ")"; });
@@ -172,7 +174,7 @@ function Init(){
             .attr("y", 9)
             .attr("dy", ".35em")
             .style("text-anchor", "start")
-            .text(function(d) { return d; });
+            .text(function(d) { return names[d]; });
 
 
 
@@ -191,7 +193,8 @@ function taskClicked(d){
     var props = d3.select("#properties");
 
     var nl = "<br/>";
-    var output = "Task ID: " + d.task_id + nl +
+    var output = "Name: " + names[d.func_id] + nl +
+            "Task ID: " + d.task_id + nl +
             "Function ID: " + d.func_id + nl +
             "Processor: " + d.proc_id + nl +
             "Start: " + Math.round(d.start) + " &mu;s" + nl +
