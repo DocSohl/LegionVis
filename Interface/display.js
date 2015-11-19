@@ -146,7 +146,8 @@ function Init(){
             .attr("width",function(d){return x(d.stop) - x(d.start);})
             .style("fill",function(d){return color(d.func_id);})
             .on('mouseover', tip.show)
-            .on('mouseout', tip.hide);
+            .on('mouseout', tip.hide)
+            .on('mouseup',taskClicked);
 
         var svglegend = d3.select("#legend")
             .attr("width",150)
@@ -186,5 +187,18 @@ function zoomed() {
     taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + d3.event.scale + ",1)");
 }
 
+function taskClicked(d){
+    var props = d3.select("#properties");
+
+    var nl = "<br/>";
+    var output = "Task ID: " + d.task_id + nl +
+            "Function ID: " + d.func_id + nl +
+            "Processor: " + d.proc_id + nl +
+            "Start: " + Math.round(d.start) + " &mu;s" + nl +
+            "Stop: " + Math.round(d.stop) + " &mu;s" + nl +
+            "Duration: " + Math.round(d.stop - d.start) + " &mu;s";
+
+    props.html(output);
+}
 
 Init();
