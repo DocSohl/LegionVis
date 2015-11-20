@@ -43,6 +43,13 @@ class Handler(SimpleHTTPRequestHandler):
             SimpleHTTPRequestHandler.do_GET(self)
 
 if __name__=="__main__":
+    print "Opening HTTP server on port 80"
     server_address = ('', 80)
-    httpd = HTTPServer(server_address, Handler)
+    try:
+        httpd = HTTPServer(server_address, Handler)
+    except IOError:
+        print "Failed on default port 80, attempting to open on port 8080"
+        server_address = ('',8080)
+        httpd = HTTPServer(server_address, Handler)
+    print "Serving..."
     httpd.serve_forever()
