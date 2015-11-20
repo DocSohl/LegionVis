@@ -38,7 +38,7 @@ class Handler(SimpleHTTPRequestHandler):
         elif self.path == "/tasks.json":
             self.send_response(200, "OKAY")
             self.end_headers()
-            self.json_out(ProcessData.fromFile("data/PROF.log"))    
+            self.json_out(ProcessData.fromFile("Data/PROF.log"))    
         elif reduce(lambda a, b: a or b, (self.path.startswith(k) for k in STATICS)):
             SimpleHTTPRequestHandler.do_GET(self)
 
