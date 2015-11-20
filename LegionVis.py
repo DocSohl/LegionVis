@@ -52,4 +52,7 @@ if __name__=="__main__":
         server_address = ('',8080)
         httpd = HTTPServer(server_address, Handler)
     print "Serving..."
-    httpd.serve_forever()
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print "Stopping server"
