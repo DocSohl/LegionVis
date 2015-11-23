@@ -98,3 +98,46 @@ text {
     background-color:#A3D900;
     color:#333;
 }
+
+#mainadjust {
+    margin: 2px;
+    float:left;
+}
+
+#mainadjust label {
+    float:left;
+    width:100px;
+    margin:2px;
+    background-color:#EFEFEF;
+    border-radius:4px;
+    border:1px solid #D0D0D0;
+    overflow:auto;
+
+}
+
+#mainadjust label span {
+    text-align:center;
+    font-size: 24px;
+    padding:13px 0px;
+    display:block;
+}
+
+#mainadjust label input {
+    position:absolute;
+    top:-20px;
+}
+
+#mainadjust input:checked + span {
+    background-color:#404040;
+    color:#F7F7F7;
+}
+
+#mainadjust .timeline {
+    background-color:#00BFFF;
+    color:#333;
+}
+
+#mainadjust .graph {
+    background-color:#A3D900;
+    color:#333;
+}

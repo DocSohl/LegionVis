@@ -9,6 +9,11 @@
 <body>
     <div style="width: 100%; display: flex;">
         <div style="width: 1300px;">
+            <div id="mainadjust">
+                <!-- TODO: I'm tempted to put the histogram logic and main logic in separate scripts.-->
+                <label class="timeline"><input type="radio" name="toggle" onchange="updateMain();" id="maintimeline" checked><span>Timeline</span></label>
+                <label class="graph"><input type="radio" name="toggle" onchange="updateMain();" id="maingraph"><span>Graph</span></label>
+            </div>
             <svg id="timeline"></svg>
         </div>
         <div style="flex-grow: 1;">
