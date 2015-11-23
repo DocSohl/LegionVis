@@ -23,10 +23,10 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/display.html', 'r'),self.wfile)
-        elif self.path == "/display.js":
+        elif self.path == "/js/main.js":
             self.send_response(200, "OKAY")
             self.end_headers()
-            copyfileobj(open('Interface/display.js', 'r'),self.wfile)	
+            copyfileobj(open('Interface/js/main.js', 'r'),self.wfile)
         elif self.path == "/style.css":
             self.send_response(200, "OKAY")
             self.end_headers()

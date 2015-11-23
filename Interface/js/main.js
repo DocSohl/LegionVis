@@ -51,6 +51,15 @@ function Init(){
         width = 1200 - margin.left - margin.right; // TODO: These values should be fixed to adjust to screen size
         height = 800 - margin.top - margin.bottom;
 
+        d3.select("#histcount").on("change",function(){
+            console.log("clicked Count!");
+            updateHist("Count");
+        });
+        d3.select("#histtime").on("change",function(){
+            console.log("clicked Time!");
+            updateHist("Time");
+        });
+
         var x = d3.scale.linear().domain([0,d3.max(timedata,function(d){return d.stop;})]).range([0,width]);
         var y = d3.scale.ordinal().domain(timedata.map(function(d){return d.proc_id;})).rangeRoundBands([0,height],0.1);
 
@@ -177,7 +186,7 @@ function Init(){
             .style("text-anchor", "start")
             .text(function(d) { return names[d]; });
 
-        updateHist(); // Set up the histogram
+        updateHist("Count"); // Set up the histogram
 
     });
 }
@@ -185,18 +194,17 @@ function Init(){
 /**
  * First run populates the histogram chart, and subsequent runs updates the histogram
  */
-function updateHist(){
+function updateHist(checkedOption){
     var bins = []; // List of bin names
     var binned = {}; // Map of bins to values
     var maxval = 0; // Largest bin (for y scale)
-    var curChecked = document.getElementById("histcount").checked; // Which element is checked in radio-buttons
     timedata.forEach(function(d){ //Iterate over every element in the task series
         var val = d.func_id; // Everything is stored via function ID
         if(!binned[val]){ // Add to the map if it doesn't exist
             binned[val] = 0;
             bins.push(val); // Register name
         }
-        if(curChecked) // If we're just counting the number of occurrences
+        if(checkedOption == "Count") // If we're just counting the number of occurrences
             binned[val]++;
         else{ // Otherwise base on run time
             binned[val] += d.stop - d.start;
@@ -250,7 +258,7 @@ function updateHist(){
             .attr("transform","translate(" + margin.left + "," + margin.top + ")");
         chart.select(".x.axis").transition().call(histxAxis);
         chart.select(".y.axis").transition().call(histyAxis);
-        if(curChecked) { // Change the label too
+        if(checkedOption == "Count") { // Change the label too
             chart.select(".yLabel").transition().attr("y",-margin.left).text("Count");
         }
         else{ // These have to transition as well so they don't pop out
