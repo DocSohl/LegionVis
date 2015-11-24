@@ -1,6 +1,5 @@
 
-var svg, xAxis, taskcontainer, zoom, width, height, names, timedata, color;
-var histFirst = true;
+var svg, xAxis, taskcontainer, zoom, width, height, names, timedata, color, histview;
 
 /**
  * Scan the time series task data and modify it with concurrency numbers
@@ -37,7 +36,7 @@ function scanData(data){
         output.push(maxes[procs]);
     }
     return maxes;
-};
+}
 
 /**
  * Loads data, prepares and populates all D3 components. Only run once
@@ -50,14 +49,14 @@ function Init(){
         var margin = {top: 20, right: 20, bottom: 30, left: 120};
         width = 1200 - margin.left - margin.right; // TODO: These values should be fixed to adjust to screen size
         height = 800 - margin.top - margin.bottom;
-
+        histview = new HistogramView(timedata);
         d3.select("#histcount").on("change",function(){
             console.log("clicked Count!");
-            updateHist("Count");
+            histview.update("Count");
         });
         d3.select("#histtime").on("change",function(){
             console.log("clicked Time!");
-            updateHist("Time");
+            histview.update("Time");
         });
 
         var x = d3.scale.linear().domain([0,d3.max(timedata,function(d){return d.stop;})]).range([0,width]);
@@ -186,7 +185,8 @@ function Init(){
             .style("text-anchor", "start")
             .text(function(d) { return names[d]; });
 
-        updateHist("Count"); // Set up the histogram
+
+        histview.update("Count"); // Set up the histogram
 
     });
 }
