@@ -13,21 +13,26 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(json.dumps(obj)+"\n")
 
     def do_POST(self):
-        logging.warning("======= POST STARTED =======")
-        logging.warning(self.headers)
         form = cgi.FieldStorage(
             fp=self.rfile,
             headers=self.headers,
             environ={'REQUEST_METHOD':'POST',
                      'CONTENT_TYPE':self.headers['Content-Type'],
                      })
-        logging.warning("======= POST VALUES =======")
-        for item in form.list:
-            logging.warning(item)
-        logging.warning("\n")
-        SimpleHTTPRequestHandler.do_GET(self)
-
+        print form['datafile'].value
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        # This is hacky and horrible and I'll look into a better way.
+        self.wfile.write('<html>')
+        self.wfile.write('  <head>')
+        self.wfile.write('    <title>Server POST Response</title>')
+        self.wfile.write('  </head>')
+        self.wfile.write('  <body>')
+        self.wfile.write('  <a href="'+'/display.html'+'">Go to the visualization!</a>')
+        self.wfile.write('  </body>')
     def do_GET(self):
+        print self.path
         STATICS = ('/Data','/Interface')
         if self.path.startswith('/Shared/'):
             # The beginnings of the link sharing utility.
