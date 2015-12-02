@@ -1,7 +1,7 @@
 
 from BaseHTTPServer import HTTPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler 
-from shutil import copyfileobj
+from shutil import copyfileobj, rmtree
 import ProcessData
 import json
 import cgi
@@ -35,7 +35,7 @@ class Handler(SimpleHTTPRequestHandler):
         jsonpath = directory + '/tasks.json'
         with open(jsonpath, 'w') as jsonfile:
             jsonfile.write(json.dumps(jsonobj)+"\n")
-
+        os.remove(logfilepath)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
