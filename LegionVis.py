@@ -6,6 +6,9 @@ import ProcessData
 import json
 import cgi
 import logging
+import uuid
+import os
+
 
 class Handler(SimpleHTTPRequestHandler):
 
@@ -19,7 +22,20 @@ class Handler(SimpleHTTPRequestHandler):
             environ={'REQUEST_METHOD':'POST',
                      'CONTENT_TYPE':self.headers['Content-Type'],
                      })
-        print form['datafile'].value
+        id = uuid.uuid4()
+        logfilepath = 'Data/' + str(id) + '.log'
+        with open(logfilepath, 'w') as logfile:
+            logfile.write(form['datafile'].value)
+
+        directory = 'SharedData/' + str(id)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        jsonobj = ProcessData.fromFile(logfilepath)
+        jsonpath = directory + '/tasks.json'
+        with open(jsonpath, 'w') as jsonfile:
+            jsonfile.write(json.dumps(jsonobj)+"\n")
+
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -29,7 +45,7 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write('    <title>Server POST Response</title>')
         self.wfile.write('  </head>')
         self.wfile.write('  <body>')
-        self.wfile.write('  <a href="'+'/display.html'+'">Go to the visualization!</a>')
+        self.wfile.write('  <a href="Shared/'+str(id)+'/display.html'+'">Go to the visualization!</a>')
         self.wfile.write('  </body>')
     def do_GET(self):
         print self.path
@@ -37,7 +53,7 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path.startswith('/Shared/'):
             # The beginnings of the link sharing utility.
             pathparts = self.path.split('/')
-            guid = pathparts[2]
+            id = pathparts[2]
             if pathparts[3] != 'tasks.json':
                 pathwithoutshared = self.path[8:]
                 index = pathwithoutshared.index('/')
@@ -46,13 +62,13 @@ class Handler(SimpleHTTPRequestHandler):
             else:
                 self.send_response(200, "OKAY")
                 self.end_headers()
-                copyfileobj(open('SharedData/'+guid+'.json', 'r'), self.wfile)
+                copyfileobj(open('SharedData/'+id+'/tasks.json', 'r'), self.wfile)
                 return
-        if self.path == "/upload.html":
+        if self.path == "/" or self.path == "/upload.html":
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/upload.html', 'r'),self.wfile)
-        elif self.path == "/" or self.path == "/display.html":
+        elif self.path == "/display.html":
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/display.html', 'r'),self.wfile)
