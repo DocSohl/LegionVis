@@ -1,5 +1,5 @@
 
-var histview, mainview;
+var histview, mainview, graphview;
 
 
 function Concurrency(data){
@@ -11,6 +11,7 @@ function Concurrency(data){
     var started = [];
     for(var i = 0; i < this.rawData.length; ++i){
         var cur = this.rawData[i];
+        cur.duration = Math.round(cur.stop - cur.start);
         var proc = cur.proc_id;
         if(this.maxStacks[proc] == undefined) this.maxStacks[proc] = 1;
         var count = 1;
@@ -78,7 +79,7 @@ function Init(){
             e = d.documentElement,
             g = d.getElementsByTagName('body')[0],
             x = w.innerWidth || e.clientWidth || g.clientWidth,
-            y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+            y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50;
 
         var mainheight = 0.6 * y;
         var mainwidth = 0.6 * x;
@@ -100,6 +101,9 @@ function Init(){
         });
 
         histview.update("Count"); // Set up the histogram
+
+        //Prepare the Graph view
+        graphview = GraphView(timedata,x,y);
 
     });
 }

@@ -146,3 +146,14 @@ text {
     background-color:#A3D900;
     color:#333;
 }
+
+.node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.link {
+    stroke: #999;
+    stroke-width: 2px;
+    stroke-opacity: 0.6;
+}

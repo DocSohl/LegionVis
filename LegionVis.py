@@ -88,6 +88,14 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/js/histogramview.js', 'r'),self.wfile)
+        elif self.path == "/js/summaryview.js":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/js/summaryview.js', 'r'),self.wfile)
+        elif self.path == "/js/graphview.js":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/js/graphview.js', 'r'),self.wfile)
         elif self.path == "/style.css":
             self.send_response(200, "OKAY")
             self.end_headers()
