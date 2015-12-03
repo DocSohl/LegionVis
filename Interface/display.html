@@ -11,31 +11,40 @@
     <script src="js/summaryview.js"></script>
 </head>
 <body>
-    <div style="width: 100%; display: flex;">
-        <div style="width: 1300px;">
-            <div id="mainadjust">
-                <label class="timeline"><input type="radio" name="toggle" onchange="updateMain();" id="maintimeline" checked><span>Timeline</span></label>
-                <label class="graph"><input type="radio" name="toggle" onchange="updateMain();" id="maingraph"><span>Graph</span></label>
+    <div id="mainadjust">
+        <label class="timeline"><input type="radio" name="toggle" onchange="toggleVisibility('#mainview','#graphview');" id="maintimeline" checked><span>Timeline</span></label>
+        <label class="graph"><input type="radio" name="toggle" onchange="toggleVisibility('#graphview','#mainview');" id="maingraph"><span>Graph</span></label>
+    </div>
+    <div id="mainview"  style="display: block">
+        <div style="width: 100%; display: flex;">
+            <div style="width: 1300px;">
+                <svg id="timeline"></svg>
             </div>
-            <svg id="timeline"></svg>
+            <div style="flex-grow: 1;">
+                <div id="histadjust">
+                    <label class="count"><input type="radio" name="toggle" id="histcount" checked><span>Count</span></label>
+                    <label class="time"><input type="radio" name="toggle" id="histtime"><span>Time</span></label>
+                    <label class="cursor"><input type="radio" name="toggle" id="histcursor"><span>Cursor</span></label>
+                </div>
+                <br/>
+                <svg id="hist"></svg><br/>
+                <h3>Task Properties</h3>
+                <div id="properties">
+                    Please select a task in the main view.
+                </div>
+            </div>
         </div>
-        <div style="flex-grow: 1;">
-            <div id="histadjust">
-                <label class="count"><input type="radio" name="toggle" id="histcount" checked><span>Count</span></label>
-                <label class="time"><input type="radio" name="toggle" id="histtime"><span>Time</span></label>
-                <label class="cursor"><input type="radio" name="toggle" id="histcursor"><span>Cursor</span></label>
-            </div>
-            <br/>
-            <svg id="hist"></svg><br/>
-            <h3>Task Properties</h3>
-            <div id="properties">
-                Please select a task in the main view.
+        <br />
+        <svg id="legend"></svg>
+        <svg id="summary"></svg>
+    </div>
+    <div id="graphview" style="display: none">
+        <div style="width: 100%; display: flex;">
+            <div style="width: 1300px;">
+                <svg id="graph"></svg>
             </div>
         </div>
     </div>
-    <br />
-    <svg id="legend"></svg>
-    <svg id="summary"></svg>
     <script src="js/main.js"></script>
 </body>
 </html>

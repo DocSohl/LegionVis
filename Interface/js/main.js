@@ -110,4 +110,18 @@ d3.selection.prototype.moveToFront = function() {
     });
 };
 
+
+function toggleVisibility(id1, id2) {
+    var d1 = d3.select(id1);
+    var d2 = d3.select(id2);
+    if(d1.style("display") == "block"){
+        d1.style("display","none");
+        d2.style("display","block");
+    }
+    else{
+        d1.style("display","block");
+        d2.style("display","none");
+    }
+}
+
 Init(); // Set up the page
