@@ -10,8 +10,10 @@ function GraphView(_timedata,_width,_height){
 
     self.svg = d3.select("#graph").attr("width",self.width).attr("height",self.height);
 
+    var maxtime = d3.max(self.timedata,function(d){return d.stop;});
+
     self.radius = d3.scale.pow().exponent(0.5)
-        .domain([0,d3.max(self.timedata,function(d){return d.stop;})])
+        .domain([0,maxtime])
         .range([5,100]);
 
     if(!("spawn" in self.timedata[0])){
@@ -26,7 +28,6 @@ function GraphView(_timedata,_width,_height){
 
     self.force = d3.layout.force()
         .charge(-120)
-        .linkDistance(30)
         .size([self.width,self.height])
         .linkDistance(function(d){return (self.radius(d.source.duration) + self.radius(d.target.duration)) * 1.5;});
 
@@ -59,9 +60,13 @@ function GraphView(_timedata,_width,_height){
         .call(self.force.drag);
 
     node.append("title")
-        .text(function(d){return mainview.names[d.func_id];});
+        .text(function(d){return d.task_id;});
 
-    self.force.on("tick", function(){
+    self.force.on("tick", function(e){
+        self.timedata.forEach(function(d){
+            d.x += (d.start/maxtime - 0.5) * e.alpha * 40;
+        });
+
         link.attr("x1", function(d) { return d.source.x; })
             .attr("y1", function(d) { return d.source.y; })
             .attr("x2", function(d) { return d.target.x; })
