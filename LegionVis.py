@@ -36,6 +36,7 @@ class Handler(SimpleHTTPRequestHandler):
         with open(jsonpath, 'w') as jsonfile:
             jsonfile.write(json.dumps(jsonobj)+"\n")
         os.remove(logfilepath)
+        print
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -45,8 +46,11 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write('    <title>Server POST Response</title>')
         self.wfile.write('  </head>')
         self.wfile.write('  <body>')
-        self.wfile.write('  <a href="Shared/'+str(id)+'/display.html'+'">Go to the visualization!</a>')
+        self.wfile.write('  <a href="Shared/'+str(id)+'/display.html'+'">Go to the visualization!</a><br/>')
+        self.wfile.write('  <span>You can share this visualization using the following URL, or by copying the URL of the visualization:<span><br/>')
+        self.wfile.write('  <input readonly="true" style="width:550px;" onclick="this.select()" value="'+form.headers.get('host')+'/Shared/'+str(id)+'/display.html"/>')
         self.wfile.write('  </body>')
+
     def do_GET(self):
         print self.path
         STATICS = ('/Data','/Interface')
