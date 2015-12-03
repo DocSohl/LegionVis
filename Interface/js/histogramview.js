@@ -6,6 +6,7 @@ function HistogramView(_timedata){
     var self = this;
     self.timedata = _timedata;
     self.histFirst = true;
+    self.histCursorSelect = false;
 }
 
 HistogramView.prototype.update = function(checkedOption, histTasks){
@@ -27,6 +28,7 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
         });
     }
     else {
+        self.histCursorSelect = false;
         self.timedata.forEach(function (d) { //Iterate over every element in the task series
             var val = d.func_id; // Everything is stored via function ID
             if (!binned[val]) { // Add to the map if it doesn't exist
@@ -106,7 +108,7 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
         .attr("y",function(d){return y(binned[d]);})
         .attr("height",function(d){return histheight - y(binned[d]);})
         .attr("width", x.rangeBand())
-        .style("fill",function(d){return color(d);});
+        .style("fill",function(d){return mainview.color(d);});
 
     bars.exit().transition().remove();
 };
