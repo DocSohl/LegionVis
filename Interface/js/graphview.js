@@ -8,7 +8,9 @@ function GraphView(_timedata,_width,_height){
     self.width = _width - margin.left - margin.right;
     self.height = _height - margin.top - margin.bottom;
 
-    self.svg = d3.select("#graph").attr("width",self.width).attr("height",self.height);
+    self.svg = d3.select("#graph")
+        .attr("width", self.width + margin.left + margin.right)
+        .attr("height", self.height + margin.top + margin.bottom);
 
     var maxtime = d3.max(self.timedata,function(d){return d.stop;});
 

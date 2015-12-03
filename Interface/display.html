@@ -13,13 +13,16 @@
 </head>
 <body>
     <div id="mainadjust">
-        <label class="timeline"><input type="radio" name="toggle" onchange="toggleVisibility('#mainview','#graphview');" id="maintimeline" checked><span>Timeline</span></label>
-        <label class="graph"><input type="radio" name="toggle" onchange="toggleVisibility('#graphview','#mainview');" id="maingraph"><span>Graph</span></label>
+        <label class="timeline"><input type="radio" name="toggle" onchange="switchViews('timeline');" id="maintimeline" checked><span>Timeline</span></label>
+        <label class="graph"><input type="radio" name="toggle" onchange="switchViews('graph');" id="maingraph"><span>Graph</span></label>
     </div>
-    <div id="mainview"  style="display: block">
+    <div id="mainview">
         <div style="width: 100%; display: flex;">
-            <div style="width: 1300px;">
+            <div id="timelinecontainer" style="width: 1300px; display: block;">
                 <svg id="timeline"></svg>
+            </div>
+            <div id="graphcontainer" style="width: 1300px; display: none;">
+                <svg id="graph"></svg>
             </div>
             <div style="flex-grow: 1;">
                 <div id="histadjust">
@@ -37,13 +40,8 @@
         </div>
         <br />
         <svg id="legend"></svg>
-        <svg id="summary"></svg>
-    </div>
-    <div id="graphview" style="display: none">
-        <div style="width: 100%; display: flex;">
-            <div style="width: 1300px;">
-                <svg id="graph"></svg>
-            </div>
+        <div id="summarycontainer" style="display: block;">
+            <svg id="summary"></svg>
         </div>
     </div>
     <script src="js/main.js"></script>

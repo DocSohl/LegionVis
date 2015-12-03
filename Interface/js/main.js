@@ -80,14 +80,13 @@ function Init(){
             g = d.getElementsByTagName('body')[0],
             x = w.innerWidth || e.clientWidth || g.clientWidth,
             y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50;
-
         var mainheight = 0.6 * y;
-        var mainwidth = 0.6 * x;
+        var mainwidth = 0.7 * x;
         mainview = new MainView(timedata, names, concurrent,mainwidth,mainheight);
         mainview.update();
 
         var summaryheight = 0.2 * y;
-        var summarywidth = 0.6 * x;
+        var summarywidth = 0.7 * x;
         summaryview = new SummaryView(timedata,names, concurrent,summarywidth,summaryheight);
         histview = new HistogramView(timedata);
         d3.select("#histcount").on("change",function(){
@@ -103,7 +102,7 @@ function Init(){
         histview.update("Count"); // Set up the histogram
 
         //Prepare the Graph view
-        graphview = GraphView(timedata,x,y);
+        graphview = GraphView(timedata,0.7*x,0.8*y);
 
     });
 }
@@ -114,17 +113,19 @@ d3.selection.prototype.moveToFront = function() {
     });
 };
 
-
-function toggleVisibility(id1, id2) {
-    var d1 = d3.select(id1);
-    var d2 = d3.select(id2);
-    if(d1.style("display") == "block"){
-        d1.style("display","none");
-        d2.style("display","block");
+function switchViews(viewname){
+    var time = d3.select("#timelinecontainer");
+    var summ = d3.select("#summarycontainer");
+    var grap = d3.select("#graphcontainer");
+    time.style("display","none");
+    summ.style("display","none");
+    grap.style("display","none");
+    if(viewname == "timeline"){
+        time.style("display","block");
+        summ.style("display","block");
     }
-    else{
-        d1.style("display","block");
-        d2.style("display","none");
+    if(viewname == "graph"){
+        grap.style("display","block");
     }
 }
 
