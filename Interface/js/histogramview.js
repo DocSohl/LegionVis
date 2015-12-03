@@ -1,12 +1,14 @@
 /**
  * Created by Phil on 11/23/2015.
  */
-function HistogramView(_timedata,width,height){
+function HistogramView(_timedata,_width,_height){
     /*Constructor for histogram view */
     var self = this;
     self.timedata = _timedata;
     self.histFirst = true;
     self.histCursorSelect = false;
+    self.width = _width;
+    self.height = _height;
 }
 
 HistogramView.prototype.update = function(checkedOption, histTasks){
@@ -48,8 +50,8 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
     if(maxval>100000){ // TODO: Make scaling proportional to number size
         margin.left = 80;
     }
-    var histwidth = 500 - margin.left - margin.right;
-    var histheight = 500 - margin.top - margin.bottom;
+    var histwidth = self.width - margin.left - margin.right;
+    var histheight = self.height - margin.top - margin.bottom;
 
 
     var x = d3.scale.ordinal().rangeRoundBands([0,histwidth],0.1)

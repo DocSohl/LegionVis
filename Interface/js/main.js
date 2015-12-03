@@ -1,5 +1,5 @@
 
-var histview, mainview, graphview;
+var histview, mainview, graphview, summaryview;
 
 
 function Concurrency(data){
@@ -80,15 +80,13 @@ function Init(){
             g = d.getElementsByTagName('body')[0],
             x = w.innerWidth || e.clientWidth || g.clientWidth,
             y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50;
-        var mainheight = 0.6 * y;
-        var mainwidth = 0.7 * x;
-        mainview = new MainView(timedata, names, concurrent,mainwidth,mainheight);
+
+        mainview = new MainView(timedata, names, concurrent,0.6 * x,0.6 * y);
         mainview.update();
 
-        var summaryheight = 0.2 * y;
-        var summarywidth = 0.7 * x;
-        summaryview = new SummaryView(timedata,names, concurrent,summarywidth,summaryheight);
-        histview = new HistogramView(timedata);
+        summaryview = new SummaryView(timedata,names, concurrent,0.6 * x, 0.2 * y);
+
+        histview = new HistogramView(timedata,0.2 * x, 0.5 * y);
         d3.select("#histcount").on("change",function(){
             histview.update("Count");
         });
