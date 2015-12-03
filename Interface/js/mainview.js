@@ -1,7 +1,7 @@
 /**
  * Created by Phil on 11/30/2015.
  */
-function MainView(_timedata, _names, _concurrent){
+function MainView(_timedata, _names, _concurrent,_width,_height){
     var self = this;
 
     self.timedata = _timedata;
@@ -10,8 +10,8 @@ function MainView(_timedata, _names, _concurrent){
 
 
     var margin = {top: 20, right: 20, bottom: 30, left: 120};
-    self.width = 1200 - margin.left - margin.right; // TODO: These values should be fixed to adjust to screen size
-    self.height = 800 - margin.top - margin.bottom;
+    self.width = _width - margin.left - margin.right;
+    self.height = _height - margin.top - margin.bottom;
     self.x = d3.scale.linear().domain([0,d3.max(self.timedata,function(d){return d.stop;})]).range([0,self.width]);
     self.y = d3.scale.ordinal().domain(self.timedata.map(function(d){return d.proc_id;})).rangeRoundBands([0,self.height],0.1);
 
@@ -134,8 +134,6 @@ function MainView(_timedata, _names, _concurrent){
 
 MainView.prototype.update = function(){
     var self = this;
-
-
 
     var supertasks = self.taskcontainer.selectAll(".supertask") // Set up each processor list
         .data(self.procs);

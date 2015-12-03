@@ -1,7 +1,7 @@
 /**
  * Created by Phil on 11/23/2015.
  */
-function HistogramView(_timedata){
+function HistogramView(_timedata,width,height){
     /*Constructor for histogram view */
     var self = this;
     self.timedata = _timedata;

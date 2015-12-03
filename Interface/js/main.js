@@ -72,11 +72,22 @@ function Init(){
     d3.json("tasks.json",function(data){ // Load all task information from the server
         timedata = data[0]; // An array of task objects
         names = data[1]; // A map of function IDs to task names
-        var concurrent = Concurrency(timedata);
+        var concurrent = new Concurrency(timedata);
+        var w = window,
+            d = document,
+            e = d.documentElement,
+            g = d.getElementsByTagName('body')[0],
+            x = w.innerWidth || e.clientWidth || g.clientWidth,
+            y = w.innerHeight|| e.clientHeight|| g.clientHeight;
 
-        mainview = new MainView(timedata, names, concurrent);
+        var mainheight = 0.6 * y;
+        var mainwidth = 0.6 * x;
+        mainview = new MainView(timedata, names, concurrent,mainwidth,mainheight);
         mainview.update();
 
+        var summaryheight = 0.2 * y;
+        var summarywidth = 0.6 * x;
+        summaryview = new SummaryView(timedata,names, concurrent,summarywidth,summaryheight);
         histview = new HistogramView(timedata);
         d3.select("#histcount").on("change",function(){
             histview.update("Count");
