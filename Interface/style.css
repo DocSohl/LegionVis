@@ -99,6 +99,11 @@ text {
     color:#333;
 }
 
+#histadjust .cursor {
+    background-color:#FFCC00;
+    color:#333;
+}
+
 #mainadjust {
     margin: 2px;
     float:left;

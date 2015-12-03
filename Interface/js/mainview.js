@@ -1,12 +1,12 @@
 /**
  * Created by Phil on 11/30/2015.
  */
-function MainView(_timedata, _names, _maxStacks){
+function MainView(_timedata, _names, _concurrent){
     var self = this;
 
     self.timedata = _timedata;
     self.names = _names;
-    self.maxStacks = _maxStacks;
+    self.concurrent = _concurrent;
 }
 
 MainView.prototype.update = function(){
@@ -27,12 +27,34 @@ MainView.prototype.update = function(){
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")").call(zoom); // Zoom on entire view
+    svg.on("mousemove",function(){
+        d3.select("#stylus")
+            .attr("x1",d3.mouse(this)[0])
+            .attr("x2",d3.mouse(this)[0])
+            .moveToFront();
+        var converted = x.invert(d3.mouse(this)[0]);
+        if(histCursorSelect) {
+            histview.update("Cursor",self.concurrent.atTime(converted));
+        }
+        //console.log("Concurrency: "+self.concurrent.atTime(converted).length);
+    });
 
     svg.append("rect") // Set up an invisible screen that allows zooming anywhere
         .attr("width",width)
         .attr("height",height)
         .style("fill","none")
         .style("pointer-events","all");
+
+    svg.append("line")
+        .attr("id","stylus")
+        .attr({
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: height,
+            stroke: "#000"
+        })
+        .style("pointer-events","none");
 
     /*D3 tip code from http://bl.ocks.org/Caged/6476579*/
     var tip = d3.tip() // Set up tooltips on hover
@@ -55,7 +77,7 @@ MainView.prototype.update = function(){
     var y1s = {}; // Map of processors to d3 ordinal scales
     for(var i = 0; i < procs.length; ++i){
         y1s[procs[i]] = d3.scale.ordinal();
-        y1s[procs[i]].domain(stacks.slice(0,self.maxStacks[procs[i]])).rangeRoundBands([y.rangeBand(),0]);
+        y1s[procs[i]].domain(stacks.slice(0,self.concurrent.maxStacks[procs[i]])).rangeRoundBands([y.rangeBand(),0]);
     }
 
     svg.append("g")

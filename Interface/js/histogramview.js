@@ -8,25 +8,39 @@ function HistogramView(_timedata){
     self.histFirst = true;
 }
 
-HistogramView.prototype.update = function(checkedOption){
+HistogramView.prototype.update = function(checkedOption, histTasks){
     var self = this;
 
     var bins = []; // List of bin names
     var binned = {}; // Map of bins to values
     var maxval = 0; // Largest bin (for y scale)
-    self.timedata.forEach(function(d){ //Iterate over every element in the task series
-        var val = d.func_id; // Everything is stored via function ID
-        if(!binned[val]){ // Add to the map if it doesn't exist
-            binned[val] = 0;
-            bins.push(val); // Register name
-        }
-        if(checkedOption == "Count") // If we're just counting the number of occurrences
+    if(checkedOption == "Cursor"){
+        if(histTasks == undefined) return;
+        histTasks.forEach(function(d){
+            var val = d.func_id; // Everything is stored via function ID
+            if (!binned[val]) { // Add to the map if it doesn't exist
+                binned[val] = 0;
+                bins.push(val); // Register name
+            }
             binned[val]++;
-        else{ // Otherwise base on run time
-            binned[val] += d.stop - d.start;
-        }
-        maxval = Math.max(maxval,binned[val]); // Keep track of largest value
-    });
+            maxval = Math.max(maxval, binned[val]); // Keep track of largest value
+        });
+    }
+    else {
+        self.timedata.forEach(function (d) { //Iterate over every element in the task series
+            var val = d.func_id; // Everything is stored via function ID
+            if (!binned[val]) { // Add to the map if it doesn't exist
+                binned[val] = 0;
+                bins.push(val); // Register name
+            }
+            if (checkedOption == "Count") // If we're just counting the number of occurrences
+                binned[val]++;
+            else if (checkedOption == "Time") // Otherwise base on run time
+                binned[val] += d.stop - d.start;
+            maxval = Math.max(maxval, binned[val]); // Keep track of largest value
+        });
+    }
+    bins.sort(function(a, b){return a-b});
 
     var margin = {top: 20, right: 30, bottom: 30, left: 60};
     if(maxval>100000){ // TODO: Make scaling proportional to number size
@@ -42,7 +56,7 @@ HistogramView.prototype.update = function(checkedOption){
         .domain([0,maxval]);
 
     var histxAxis = d3.svg.axis().scale(x).orient("bottom");
-    var histyAxis = d3.svg.axis().scale(y).orient("left");
+    var histyAxis = d3.svg.axis().scale(y).orient("left").tickFormat(d3.format("d"));
 
     var chart;
     if(self.histFirst){ // For the first iteration, set everything up
@@ -84,12 +98,15 @@ HistogramView.prototype.update = function(checkedOption){
 
     var bars = chart.selectAll(".bar").data(bins); // The actual data boxes
 
-    bars.enter().append("rect").attr("class","bar");
+    bars.enter().append("rect").attr("class","bar").attr("opacity",0).style("fill","transparent");
 
     bars.transition() // Smoothly move between states
+        .attr("opacity",1)
         .attr("x",function(d){return x(names[d]);})
         .attr("y",function(d){return y(binned[d]);})
         .attr("height",function(d){return histheight - y(binned[d]);})
         .attr("width", x.rangeBand())
         .style("fill",function(d){return color(d);});
+
+    bars.exit().transition().remove();
 };
