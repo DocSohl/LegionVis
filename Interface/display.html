@@ -11,7 +11,7 @@
     <script src="js/summaryview.js"></script>
     <script src="js/graphview.js"></script>
 </head>
-<body>
+<body onresize="resizeViews()">
     <div id="mainadjust">
         <label class="timeline"><input type="radio" name="toggle" onchange="switchViews('timeline');" id="maintimeline" checked><span>Timeline</span></label>
         <label class="graph"><input type="radio" name="toggle" onchange="switchViews('graph');" id="maingraph"><span>Graph</span></label>
