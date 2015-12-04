@@ -4,12 +4,19 @@ import re
 
 prefix = r'\[(?P<node>[0-9]+) - (?P<thread>[0-9a-f]+)\] \{\w+\}\{legion_prof\}: '
 
+processor_kinds = {
+    0 : 'GPU',
+    1 : 'CPU',
+    2 : 'Utility',
+    3 : 'I/O',
+}
 
 def analyze(data):
     tasks = []
     taskmap = {}
     instances = []
     names = {}
+    procs = {}
     for line in data:
         match = re.compile(prefix + r'Prof Task Info (?P<tid>[0-9]+) (?P<fid>[0-9]+) (?P<pid>[a-f0-9]+) (?P<create>[0-9]+) (?P<ready>[0-9]+) (?P<start>[0-9]+) (?P<stop>[0-9]+)( (?P<spawn>[0-9]+))?').match(line)
         if match is not None:
@@ -43,6 +50,12 @@ def analyze(data):
             if newinstance["op_id"] in taskmap:
                 newinstance["proc_id"] = taskmap[newinstance["op_id"]]["proc_id"]
                 instances.append(newinstance)
+        match = re.compile(prefix + r'Prof Proc Desc (?P<pid>[a-f0-9]+) (?P<kind>[0-9]+)').match(line)
+        if match is not None:
+            kind = int(match.group('kind'))
+            procs[int(match.group('pid'),16)] = processor_kinds[kind]
+    for task in tasks:
+        task["proc_kind"] = procs[task["proc_id"]]
     return tasks, names, instances
 
 

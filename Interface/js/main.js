@@ -82,10 +82,11 @@ function Init(){
             x = w.innerWidth || e.clientWidth || g.clientWidth,
             y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50;
 
-        mainview = new MainView(timedata, names, concurrent, instances, 0.6 * x, 0.6 * y);
+        d3.select("#summarycontainer").style("width",0.8*x);
+        mainview = new MainView(timedata, names, concurrent, instances, 0.8 * x, 0.7 * y);
         mainview.update();
 
-        summaryview = new SummaryView(timedata, names, concurrent, 0.6 * x, 0.2 * y);
+        summaryview = new SummaryView(timedata, names, concurrent, 0.8 * x, 0.2 * y);
 
         histview = new HistogramView(timedata, 0.2 * x, 0.5 * y);
         d3.select("#histcount").on("change",function(){
@@ -101,7 +102,8 @@ function Init(){
         histview.update("Count"); // Set up the histogram
 
         //Prepare the Graph view
-        graphview = new GraphView(timedata, 0.6*x, 0.8*y);
+        d3.select("#graphcontainer").style("width",0.8*x);
+        graphview = new GraphView(timedata, 0.8*x, 0.8*y);
 
     });
 }
