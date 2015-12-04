@@ -82,14 +82,12 @@ function Init(){
             x = w.innerWidth || e.clientWidth || g.clientWidth,
             y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50;
 
-        mainview = new MainView(timedata, names, concurrent,0.6 * x,0.6 * y);
+        mainview = new MainView(timedata, names, concurrent, instances, 0.6 * x, 0.6 * y);
         mainview.update();
 
-        memoryview = new MemoryView(instances, 0.6 * x, 0.6 * y);
+        summaryview = new SummaryView(timedata, names, concurrent, 0.6 * x, 0.2 * y);
 
-        summaryview = new SummaryView(timedata,names, concurrent,0.6 * x, 0.2 * y);
-
-        histview = new HistogramView(timedata,0.2 * x, 0.5 * y);
+        histview = new HistogramView(timedata, 0.2 * x, 0.5 * y);
         d3.select("#histcount").on("change",function(){
             histview.update("Count");
         });
@@ -103,7 +101,7 @@ function Init(){
         histview.update("Count"); // Set up the histogram
 
         //Prepare the Graph view
-        graphview = new GraphView(timedata,0.6*x,0.8*y);
+        graphview = new GraphView(timedata, 0.6*x, 0.8*y);
 
     });
 }
@@ -123,13 +121,12 @@ function switchViews(viewname){
     summ.style("display","none");
     grap.style("display","none");
     memo.style("display","none");
-    if(viewname == "timeline"){
+    if(viewname == "timeline" || viewname == "memory"){
         time.style("display","block");
         summ.style("display","block");
-    }
-    if(viewname == "memory"){
-        memo.style("display","block");
-        summ.style("display","block");
+        mainview.memory = false;
+        if(viewname == "memory") mainview.memory = true;
+        mainview.update();
     }
     if(viewname == "graph"){
         grap.style("display","block");
