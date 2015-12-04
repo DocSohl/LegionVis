@@ -100,7 +100,7 @@ function Init(){
         histview.update("Count"); // Set up the histogram
 
         //Prepare the Graph view
-        graphview = GraphView(timedata,0.7*x,0.8*y);
+        graphview = new GraphView(timedata,0.7*x,0.8*y);
 
     });
 }

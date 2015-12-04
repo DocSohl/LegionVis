@@ -19,11 +19,7 @@ function MainView(_timedata, _names, _concurrent,_width,_height){
         .scaleExtent([1,40])// TODO: These should be adjusted by total time
         .x(self.x)
         .on("zoom", function(){
-            // Bound the view even when scaled (Note: X axis is reversed and goes from -width to 0)
-            var xmov = Math.max(Math.min(d3.event.translate[0],0),-self.width*d3.event.scale + self.width);
-            self.zoom.translate([xmov,0]); // Apply the panning movement
-            self.svg.select(".x.axis").call(self.xAxis); // Apply the movement to the scaled axis
-            self.taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + d3.event.scale + ",1)");
+            self.updateZoom(d3.event.scale,d3.event.translate[0]);
         });
 
     self.svg = d3.select("#timeline") // The main view
@@ -138,7 +134,7 @@ MainView.prototype.update = function(){
     var supertasks = self.taskcontainer.selectAll(".supertask") // Set up each processor list
         .data(self.procs);
 
-    tasks = supertasks.enter().append("g")
+    var tasks = supertasks.enter().append("g")
         .attr("class","g")
         .attr("transform",function(d){return "translate(0,"+self.y(d)+")";}); // Put each proc in its own g
 
@@ -178,7 +174,7 @@ MainView.prototype.update = function(){
         .on('mouseup',function(d){
             var props = d3.select("#properties"); // Properties div
 
-            var nl = "<br/>"; // The newline break
+            var nl = "<br/>";
             var output = "Name: " + self.names[d.func_id] + nl +
                 "Task ID: " + d.task_id + nl +
                 "Function ID: " + d.func_id + nl +
@@ -189,5 +185,14 @@ MainView.prototype.update = function(){
 
             props.html(output); // TODO: Fix this to prevent XSS
         });
-
+};
+MainView.prototype.updateZoom = function(scale,translate){
+    var self = this;
+    console.log(scale);
+    console.log(translate);
+    // Bound the view even when scaled (Note: X axis is reversed and goes from -width to 0)
+    var xmov = Math.max(Math.min(translate,0),-self.width*scale + self.width);
+    self.zoom.translate([xmov,0]); // Apply the panning movement
+    self.svg.select(".x.axis").call(self.xAxis); // Apply the movement to the scaled axis
+    self.taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + scale + ",1)");
 };

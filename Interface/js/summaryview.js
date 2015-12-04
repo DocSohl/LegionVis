@@ -13,7 +13,7 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
     self.height = _height - margin.top - margin.bottom;
     var maxtime = d3.max(self.timedata,function(d){return d.stop;});
 
-    var numsamples = 200; // TODO: Allow user to change this.
+    var numsamples = 200;
     var stepsize = maxtime/numsamples;
     var counthist = [];
     for(var t = 0; t < maxtime; t+=stepsize){
@@ -28,12 +28,11 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
         });
         var y0 = 0;
         counts.funcs = mainview.funcs.map(function(func_id){
-            return {func_id: func_id, y0: y0, y1: y0 += +counts[func_id]};
+            return {func_id: func_id, y0: y0, y1: y0 += counts[func_id]};
         });
         counthist.push(counts);
     }
     var maxcount = d3.max(counthist, function(d){return d.total;});
-    console.log(maxcount);
     self.x = d3.scale.linear()
         .domain([0,maxtime])
         .range([0,self.width]);
@@ -73,7 +72,13 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
     var brush = d3.svg.brush()
         .x(self.x)
         .on("brush", function() {
+            var width = brush.extent()[1] - brush.extent()[0];
+            var scale = maxtime/width;
+            if(scale <= 40){
+                var translate = -1*self.x(brush.extent()[0])*scale;
 
+                mainview.updateZoom(scale,translate);
+            }
         });
     self.svg.append("g")
         .attr("class", "x brush")
@@ -82,3 +87,7 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
         .attr("y", 0)
         .attr("height", self.height);
 }
+
+SummaryView.prototype.updateBrush = function(newextent){
+    d3.select(".x.brush").selectAll("rect").attr("x",newextent[0]).attr("width",newextent[1] - newextent[0]);
+};
