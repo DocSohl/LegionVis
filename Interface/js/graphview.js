@@ -8,15 +8,32 @@ function GraphView(_timedata,_width,_height){
     self.width = _width - margin.left - margin.right;
     self.height = _height - margin.top - margin.bottom;
 
+    self.zoom = d3.behavior.zoom()
+        .scaleExtent([0.1,10])
+        .on("zoom",function(){
+            self.svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        });
+
+
     self.svg = d3.select("#graph")
         .attr("width", self.width + margin.left + margin.right)
-        .attr("height", self.height + margin.top + margin.bottom);
+        .attr("height", self.height + margin.top + margin.bottom)
+        .append("g").attr("transform","translate("+margin.left+","+margin.top+")")
+        .call(self.zoom);
+
+    var rect = self.svg.append("rect")
+        .attr("width", self.width)
+        .attr("height", self.height)
+        .style("fill", "none")
+        .style("pointer-events", "all");
+
+    self.svg = self.svg.append("g");
 
     var maxtime = d3.max(self.timedata,function(d){return d.stop;});
 
     self.radius = d3.scale.pow().exponent(0.5)
         .domain([0,maxtime])
-        .range([5,100]);
+        .range([5,50]);
 
     if(!("spawn" in self.timedata[0])){
         self.svg.append("text")
