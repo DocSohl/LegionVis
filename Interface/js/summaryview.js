@@ -17,17 +17,24 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
     var stepsize = maxtime/numsamples;
     var counthist = [];
     for(var t = 0; t < maxtime; t+=stepsize){
-        var tasks = self.concurrent.atTime(t + (stepsize/2));
-        var counts = {mintime:t,maxtime:t+stepsize,total:0};
-        mainview.funcs.forEach(function(d){
+
+        var counts = {mintime: t, maxtime: t + stepsize, total: 0};
+
+        mainview.funcs.forEach(function (d) {
             counts[d] = 0;
         });
-        tasks.forEach(function(d){
-            counts[d.func_id]+=1;
-            counts.total+=1;
-        });
+        for(var i = 0; i < 10; i++)
+        {
+            var rand = (Math.random()*stepsize)+t;
+            var tasks = self.concurrent.atTime(rand);
+            tasks.forEach(function (d) {
+                counts[d.func_id] += 1;
+                counts.total += 1;
+            });
+        }
+
         var y0 = 0;
-        counts.funcs = mainview.funcs.map(function(func_id){
+        counts.funcs = mainview.funcs.map(function (func_id) {
             return {func_id: func_id, y0: y0, y1: y0 += counts[func_id]};
         });
         counthist.push(counts);
@@ -46,7 +53,7 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     self.xAxis = d3.svg.axis().scale(self.x).orient("bottom");
-    self.yAxis = d3.svg.axis().scale(self.y).ticks(maxcount).orient("left");
+    self.yAxis = d3.svg.axis().scale(self.y).ticks(5).orient("left");
     self.svg.append("g")
         .attr("class","x axis")
         .attr("transform","translate(0,"+self.height+")")
@@ -72,14 +79,34 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
     self.brush = d3.svg.brush()
         .x(self.x)
         .on("brush", function() {
-            var width = self.brush.extent()[1] - self.brush.extent()[0];
+            var extent = self.brush.extent();
+            var width = extent[1] - extent[0];
             var scale = maxtime/width;
-            if(scale <= 40){
-                var translate = -1*self.x(self.brush.extent()[0])*scale;
-                mainview.updateZoom(scale,translate);
-                mainview.x.domain(self.brush.extent());
-                mainview.svg.select(".x.axis").call(mainview.xAxis);
+            var min = maxtime/40;
+            if(width < min) {
+                var padding = ( min - width )/2;
+                if(padding > extent[0]){
+                    var extra = padding - extent[0];
+                    extent[0] = 0;
+                    extent[1] += (padding+extra);
+                }
+                else if(padding+ extent[1] > maxtime){
+                    var extra = padding- (maxtime - extent[1]);
+                    extent[0] -=(padding+extra);
+                    extent[1] = maxtime;
+                }
+                else {
+                    extent[0] -= padding;
+                    extent[1] += padding;
+                }
+                self.brush.extent(extent);
+                d3.select(".x.brush").call(self.brush);
             }
+            var translate = -1*self.x(self.brush.extent()[0])*scale;
+            mainview.updateZoom(scale,translate);
+            mainview.x.domain(self.brush.extent());
+            mainview.svg.select(".x.axis").call(mainview.xAxis);
+
         });
     self.svg.append("g")
         .attr("class", "x brush")
