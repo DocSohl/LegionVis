@@ -20,11 +20,7 @@ function MainView(_timedata, _names, _concurrent,_width,_height){
         .x(self.x)
         .on("zoom", function(){
             // Bound the view even when scaled (Note: X axis is reversed and goes from -width to 0)
-            var xmov = Math.max(Math.min(d3.event.translate[0], 0), -self.width * d3.event.scale + self.width);
-            self.zoom.translate([xmov, 0]); // Apply the panning movement
-            self.svg.select(".x.axis").call(self.xAxis); // Apply the movement to the scaled axis
-            self.taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + d3.event.scale + ",1)");
-            summaryview.updateBrush();
+            mainview.updateZoom(d3.event.scale,d3.event.translate[0]);
         });
 
     self.svg = d3.select("#timeline") // The main view
@@ -40,6 +36,9 @@ function MainView(_timedata, _names, _concurrent,_width,_height){
         var converted = self.x.invert(d3.mouse(this)[0]);
         if(histview.histCursorSelect) {
             histview.update("Cursor",self.concurrent.atTime(converted));
+        }
+        else{
+
         }
         //console.log("Concurrency: "+self.concurrent.atTime(converted).length);
     });
