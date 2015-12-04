@@ -77,7 +77,8 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
             if(scale <= 40){
                 var translate = -1*self.x(self.brush.extent()[0])*scale;
                 mainview.updateZoom(scale,translate);
-
+                mainview.x.domain(self.brush.extent());
+                mainview.svg.select(".x.axis").call(mainview.xAxis);
             }
         });
     self.svg.append("g")

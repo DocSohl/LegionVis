@@ -21,6 +21,8 @@ function MainView(_timedata, _names, _concurrent,_width,_height){
         .on("zoom", function(){
             // Bound the view even when scaled (Note: X axis is reversed and goes from -width to 0)
             mainview.updateZoom(d3.event.scale,d3.event.translate[0]);
+            summaryview.updateBrush();
+
         });
 
     self.svg = d3.select("#timeline") // The main view
@@ -192,6 +194,7 @@ MainView.prototype.update = function(){
 };
 MainView.prototype.updateZoom = function(scale,translate){
     var self = this;
+    console.log(translate);
     // Bound the view even when scaled (Note: X axis is reversed and goes from -width to 0)
     var xmov = Math.max(Math.min(translate,0),-self.width*scale + self.width);
     self.zoom.translate([xmov,0]); // Apply the panning movement
