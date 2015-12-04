@@ -69,25 +69,28 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
         .attr("y", function(d) { return self.y(d.y1); })
         .attr("height", function(d) { return self.y(d.y0) - self.y(d.y1); })
         .style("fill", function(d) { return mainview.color(d.func_id); });
-    var brush = d3.svg.brush()
+    self.brush = d3.svg.brush()
         .x(self.x)
         .on("brush", function() {
-            var width = brush.extent()[1] - brush.extent()[0];
+            var width = self.brush.extent()[1] - self.brush.extent()[0];
             var scale = maxtime/width;
             if(scale <= 40){
-                var translate = -1*self.x(brush.extent()[0])*scale;
+                //mainview.x.domain(self.brush.empty() ? self.x.domain() : self.brush.extent());
+                var translate = -1*self.x(self.brush.extent()[0])*scale;
 
                 mainview.updateZoom(scale,translate);
             }
         });
     self.svg.append("g")
         .attr("class", "x brush")
-        .call(brush)
+        .call(self.brush)
         .selectAll("rect")
         .attr("y", 0)
         .attr("height", self.height);
 }
 
-SummaryView.prototype.updateBrush = function(newextent){
-    d3.select(".x.brush").selectAll("rect").attr("x",newextent[0]).attr("width",newextent[1] - newextent[0]);
+SummaryView.prototype.updateBrush = function(){
+    var self = this;
+    self.brush.extent(mainview.x.domain());
+    self.svg.select(".x.brush").call(self.brush);
 };
