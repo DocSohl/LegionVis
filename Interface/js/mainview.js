@@ -190,4 +190,4 @@ MainView.prototype.update = function(){
             props.html(output); // TODO: Fix this to prevent XSS
         });
 
-}
+};
