@@ -19,13 +19,25 @@ function GraphView(_timedata,_width,_height){
         .attr("width", self.width + margin.left + margin.right)
         .attr("height", self.height + margin.top + margin.bottom)
         .append("g").attr("transform","translate("+margin.left+","+margin.top+")")
-        .call(self.zoom);
+        .call(self.zoom)
+        .on("mousedown.zoom", null)
+        .on("touchstart.zoom", null)
+        .on("touchmove.zoom", null)
+        .on("touchend.zoom", null);
 
     var rect = self.svg.append("rect")
         .attr("width", self.width)
         .attr("height", self.height)
         .style("fill", "none")
         .style("pointer-events", "all");
+
+    self.tip = d3.tip() // Set up tooltips on hover
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+            return "<strong>Func_ID:</strong> <span style='color:red'>" + mainview.names[d.func_id] + "</span>";
+        });
+    self.svg.call(self.tip);
 
     self.svg = self.svg.append("g");
 
@@ -76,7 +88,23 @@ function GraphView(_timedata,_width,_height){
         .attr("class","node")
         .attr("r",function(d){return self.radius(d.duration);})
         .style("fill",function(d){return mainview.color(d.func_id)})
-        .call(self.force.drag);
+        .call(self.force.drag)
+        .on('mouseover', self.tip.show)
+        .on('mouseout', self.tip.hide)
+        .on('mouseup',function(d){
+            var props = d3.select("#properties"); // Properties div
+
+            var nl = "<br/>";
+            var output = "Name: " + mainview.names[d.func_id] + nl +
+                "Task ID: " + d.task_id + nl +
+                "Function ID: " + d.func_id + nl +
+                "Processor: " + d.proc_id + nl +
+                "Start: " + Math.round(d.start) + " &mu;s" + nl +
+                "Stop: " + Math.round(d.stop) + " &mu;s" + nl +
+                "Duration: " + Math.round(d.stop - d.start) + " &mu;s";
+
+            props.html(output); // TODO: Fix this to prevent XSS
+        });
 
     node.append("title")
         .text(function(d){return d.task_id;});
