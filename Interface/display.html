@@ -10,19 +10,24 @@
     <script src="js/mainview.js"></script>
     <script src="js/summaryview.js"></script>
     <script src="js/graphview.js"></script>
+    <script src="js/memoryview.js"></script>
 </head>
 <body>
     <div id="mainadjust">
         <label class="timeline"><input type="radio" name="toggle" onchange="switchViews('timeline');" id="maintimeline" checked><span>Timeline</span></label>
+        <label class="memory"><input type="radio" name="toggle" onchange="switchViews('memory');" id="mainmemory"><span>Memory</span></label>
         <label class="graph"><input type="radio" name="toggle" onchange="switchViews('graph');" id="maingraph"><span>Graph</span></label>
     </div>
     <div id="mainview">
         <div style="width: 100%; display: flex;">
-            <div id="timelinecontainer" style="width: 1300px; display: block; float:left;">
-                <svg id="timeline"></svg>
-                <div id="summarycontainer" style="display: block;">
-                    <svg id="summary"></svg>
+            <div id="summarycontainer" style="width: 1300px; display: block; float:left;">
+                <div id="timelinecontainer" style="display: block;">
+                    <svg id="timeline"></svg>
                 </div>
+                <div id="memorycontainer" style="display: none;">
+                    <svg id="memory"></svg>
+                </div>
+                <svg id="summary"></svg>
             </div>
             <div id="graphcontainer" style="width: 1300px; display: none;">
                 <svg id="graph"></svg>

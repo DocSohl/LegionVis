@@ -42,7 +42,6 @@ function MainView(_timedata, _names, _concurrent,_width,_height){
         else{
 
         }
-        //console.log("Concurrency: "+self.concurrent.atTime(converted).length);
     });
 
     self.svg.append("rect") // Set up an invisible screen that allows zooming anywhere
@@ -194,7 +193,7 @@ MainView.prototype.update = function(){
 };
 MainView.prototype.updateZoom = function(scale,translate){
     var self = this;
-    console.log(translate);
+    //console.log(translate);
     // Bound the view even when scaled (Note: X axis is reversed and goes from -width to 0)
     var xmov = Math.max(Math.min(translate,0),-self.width*scale + self.width);
     self.zoom.translate([xmov,0]); // Apply the panning movement

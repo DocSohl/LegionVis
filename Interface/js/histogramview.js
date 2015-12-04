@@ -55,7 +55,7 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
 
 
     var x = d3.scale.ordinal().rangeRoundBands([0,histwidth],0.1)
-        .domain(bins.map(function(d){return names[d];}));
+        .domain(bins.map(function(d){return mainview.names[d];}));
     var y = d3.scale.linear().range([histheight,0])
         .domain([0,maxval]);
 
@@ -106,7 +106,7 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
 
     bars.transition() // Smoothly move between states
         .attr("opacity",1)
-        .attr("x",function(d){return x(names[d]);})
+        .attr("x",function(d){return x(mainview.names[d]);})
         .attr("y",function(d){return y(binned[d]);})
         .attr("height",function(d){return histheight - y(binned[d]);})
         .attr("width", x.rangeBand())

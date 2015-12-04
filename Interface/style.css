@@ -90,17 +90,17 @@ text {
 }
 
 #histadjust .count {
-    background-color:#00BFFF;
+    background-color:#a6cee3;
     color:#333;
 }
 
 #histadjust .time {
-    background-color:#A3D900;
+    background-color:#b2df8a;
     color:#333;
 }
 
 #histadjust .cursor {
-    background-color:#FFCC00;
+    background-color:#fb9a99;
     color:#333;
 }
 
@@ -138,12 +138,17 @@ text {
 }
 
 #mainadjust .timeline {
-    background-color:#00BFFF;
+    background-color:#a6cee3;
     color:#333;
 }
 
 #mainadjust .graph {
-    background-color:#A3D900;
+    background-color:#b2df8a;
+    color:#333;
+}
+
+#mainadjust .memory {
+    background-color:#fb9a99;
     color:#333;
 }
 

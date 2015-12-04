@@ -71,8 +71,9 @@ function Concurrency(data){
  */
 function Init(){
     d3.json("tasks.json",function(data){ // Load all task information from the server
-        timedata = data[0]; // An array of task objects
-        names = data[1]; // A map of function IDs to task names
+        var timedata = data[0]; // An array of task objects
+        var names = data[1]; // A map of function IDs to task names
+        var instances = data[2];
         var concurrent = new Concurrency(timedata);
         var w = window,
             d = document,
@@ -83,6 +84,8 @@ function Init(){
 
         mainview = new MainView(timedata, names, concurrent,0.6 * x,0.6 * y);
         mainview.update();
+
+        memoryview = new MemoryView(instances, 0.6 * x, 0.6 * y);
 
         summaryview = new SummaryView(timedata,names, concurrent,0.6 * x, 0.2 * y);
 
@@ -115,11 +118,17 @@ function switchViews(viewname){
     var time = d3.select("#timelinecontainer");
     var summ = d3.select("#summarycontainer");
     var grap = d3.select("#graphcontainer");
+    var memo = d3.select("#memorycontainer");
     time.style("display","none");
     summ.style("display","none");
     grap.style("display","none");
+    memo.style("display","none");
     if(viewname == "timeline"){
         time.style("display","block");
+        summ.style("display","block");
+    }
+    if(viewname == "memory"){
+        memo.style("display","block");
         summ.style("display","block");
     }
     if(viewname == "graph"){
