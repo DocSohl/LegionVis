@@ -5,7 +5,6 @@
 	<meta charset="UTF-8">
 	<title>LegionViz</title>
 	<link rel="stylesheet" href="webstyle.css" type="text/css">
-    <script language="javascript" src="js/script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 </head>
 <body>
@@ -31,12 +30,22 @@
             <div class="header">
                         <p>
                                 Here is where we link the tool. If the user came here via the demo link at the landing page, preload with a sample data set.
-                        </p>                   
-            </div>         
-            <div id="tool">
-                <iframe src="display.html"/ width=100% height=800 frameBorder=0>
+                        </p>
+
+                <div style="display: block;">
+                    <form id="submission" enctype="multipart/form-data" method="post" target="responsedisplay">
+                        <span>Please upload a .log file for a Legion Profile.</span> <br /><br />
+                        <input type="file" name="datafile" size="400000000" accept=".log, .txt"/>
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+            </div>
+            <div class="tool" style="display: none;">
+                <!--<iframe name="responsedisplay" width=100% height=800 frameBorder=0 />-->
+                <iframe name="responsedisplay" id="responsedisplay" width=100% height=800 frameBorder=0 onLoad="test();"></iframe>
             </div>
         </div>
+        <script language="javascript" src="js/script.js"></script>
         
 </body>
 </html>
