@@ -1,7 +1,9 @@
 # LegionVis
 ### A web-based visualization for Legion profiling results.
 
-This repository contains code for a web server capable of visualizing performance profiles from programs written with the Legion programming system.
+This repository contains code for a web server capable of visualizing performance profiles from programs written with the Legion programming system. 
+
+See a live version at (http://legion.sohl.org/)
 
 ### What is Legion?
 [Legion](http://legion.stanford.edu/) is a "data-centric parallel programming system for writing portable high performance programs targeted at distributed heterogeneous architectures." Legion provides an abstraction for highly parallelized code to be scheduled in an efficient and structurally aware manner, and thus makes code execution decisions that may not be immediately apparent to the programmer.
