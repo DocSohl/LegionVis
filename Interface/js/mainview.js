@@ -184,6 +184,8 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .attr("width",400)
         .attr("height",20*self.funcs.length+30).append("g");
 
+    d3.select("#histcontainer").style("height",5/7 * _height + 20*self.funcs.length+30+13);
+
     svglegend.append("text").attr("y",20).attr("x",50).text("Task Name"); // Legend title
 
     var legend = svglegend.selectAll(".legend") // Generate legend based on entries
