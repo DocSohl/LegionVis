@@ -1,11 +1,11 @@
 
 from BaseHTTPServer import HTTPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler 
-from shutil import copyfileobj, rmtree
+from shutil import copyfileobj
 import ProcessData
 import json
 import cgi
-import logging
+
 import uuid
 import os
 
@@ -16,40 +16,43 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(json.dumps(obj)+"\n")
 
     def do_POST(self):
+
         form = cgi.FieldStorage(
             fp=self.rfile,
             headers=self.headers,
             environ={'REQUEST_METHOD':'POST',
                      'CONTENT_TYPE':self.headers['Content-Type'],
                      })
-        id = uuid.uuid4()
-        logfilepath = 'Data/' + str(id) + '.log'
-        with open(logfilepath, 'w') as logfile:
-            logfile.write(form['datafile'].value)
+        print "POST: %s" % self.path
+        if self.path == '/upload.html':
+            id = uuid.uuid4()
+            logfilepath = 'Data/' + str(id) + '.log'
+            with open(logfilepath, 'w') as logfile:
+                logfile.write(form['datafile'].value)
 
-        directory = 'SharedData/' + str(id)
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+            directory = 'SharedData/' + str(id)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
 
-        jsonobj = ProcessData.fromFile(logfilepath)
-        jsonpath = directory + '/tasks.json'
-        with open(jsonpath, 'w') as jsonfile:
-            jsonfile.write(json.dumps(jsonobj)+"\n")
-        os.remove(logfilepath)
-        print
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        # This is hacky and horrible and I'll look into a better way.
-        self.wfile.write('<html>')
-        self.wfile.write('  <head>')
-        self.wfile.write('    <title>Server POST Response</title>')
-        self.wfile.write('  </head>')
-        self.wfile.write('  <body>')
-        self.wfile.write('  <a href="Shared/'+str(id)+'/display.html'+'">Go to the visualization!</a><br/>')
-        self.wfile.write('  <span>You can share this visualization using the following URL, or by copying the URL of the visualization:<span><br/>')
-        self.wfile.write('  <input readonly="true" style="width:550px;" onclick="this.select()" value="'+form.headers.get('host')+'/Shared/'+str(id)+'/display.html"/>')
-        self.wfile.write('  </body>')
+            jsonobj = ProcessData.fromFile(logfilepath)
+            jsonpath = directory + '/tasks.json'
+            with open(jsonpath, 'w') as jsonfile:
+                jsonfile.write(json.dumps(jsonobj)+"\n")
+            os.remove(logfilepath)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            # This is hacky and horrible and I'll look into a better way.
+            self.wfile.write('<html>')
+            self.wfile.write('  <head>')
+            self.wfile.write('    <title>Server POST Response</title>')
+            self.wfile.write('  </head>')
+            self.wfile.write('  <body>')
+            self.wfile.write('  <a href="Shared/'+str(id)+'/display.html'+'">Go to the visualization!</a><br/>')
+            self.wfile.write('  <span>You can share this visualization using the following URL, or by copying the URL of the visualization:<span><br/>')
+            self.wfile.write('  <input readonly="true" style="width:550px;" onclick="this.select()" value="'+form.headers.get('host')+'/Shared/'+str(id)+'/display.html"/>')
+            self.wfile.write('  </body>')
+
 
     def do_GET(self):
         print self.path
