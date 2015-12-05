@@ -95,19 +95,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .attr("height", self.height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")").call(self.zoom); // Zoom on entire view
-    self.svg.on("mousemove",function(){
-        d3.select("#stylus")
-            .attr("x1",d3.mouse(this)[0])
-            .attr("x2",d3.mouse(this)[0])
-            .moveToFront();
-        var converted = self.x.invert(d3.mouse(this)[0]);
-        if(histview.histCursorSelect) {
-            histview.update("Cursor",self.concurrent.atTime(converted));
-        }
-        else{
 
-        }
-    });
 
     self.svg.append("rect") // Set up an invisible screen that allows zooming anywhere
         .attr("width",self.width)
@@ -159,6 +147,8 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
 
     self.taskcontainer = self.svg.append("g"); // Main view container
 
+
+
     self.svg.append("defs").append("svg:clipPath") // Set up a clip path so tasks don't appear offscreen
         .attr("id", "clip")
         .append("svg:rect")
@@ -171,7 +161,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
 
     var svglegend = d3.select("#legend") // Set up the legend in a separate SVG
         .attr("width",400)
-        .attr("height",20*self.funcs.length+30);
+        .attr("height",20*self.funcs.length+30).append("g");
 
     svglegend.append("text").attr("y",20).attr("x",50).text("Task Name"); // Legend title
 
@@ -211,7 +201,21 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .attr("x",-1)
         .attr("y",-1)
         .attr("width",self.width+2)
-        .attr("height",self.y.rangeBand()+2); // Extra padding to allow a border
+        .attr("height",self.y.rangeBand()+2) // Extra padding to allow a border
+        .style("fill","white")
+        .on("mousemove",function(){
+        d3.select("#stylus")
+            .attr("x1",d3.mouse(this)[0])
+            .attr("x2",d3.mouse(this)[0])
+            .moveToFront();
+        var converted = self.x.invert(d3.mouse(this)[0]);
+        if(histview.histCursorSelect) {
+            histview.update("Cursor",self.concurrent.atTime(converted));
+        }
+        else{
+
+        }
+    });
 
 
     tasks.append("text") // Name of the processor
@@ -219,7 +223,8 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .style("text-anchor", "end")
         .attr("x",-10)
         .attr("y",self.y.rangeBand()/2)
-        .text(function(d){return d.name + " 0x" + parseInt(d.id).toString(16).toUpperCase();});
+        .text(function(d){return d.name + " 0x" + parseInt(d.id).toString(16).toUpperCase();})
+        .on("mousemove",null);
 
     var clipg = tasks.append("g") // Limit the actual task boxes by the clipping window
         .attr("clip-path","url(#clip)");

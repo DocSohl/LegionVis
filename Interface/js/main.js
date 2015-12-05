@@ -108,6 +108,18 @@ function Init(){
     });
 }
 
+function resizeViews(){
+    d3.select("#timeline").select("g").remove();
+    d3.select("#graph").select("g").remove();
+    d3.select("#summary").select("g").remove();
+    d3.select("#hist").select("g").remove();
+    d3.select("#legend").select("g").remove();
+
+
+
+    Init();
+}
+
 d3.selection.prototype.moveToFront = function() {
     return this.each(function(){
         this.parentNode.appendChild(this);
