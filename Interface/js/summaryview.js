@@ -8,7 +8,7 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
     self.timedata = _timedata;
     self.names = _names;
     self.concurrent = _concurrent;
-    var margin = {top: 20, right: 20, bottom: 30, left: 90};
+    var margin = {top: 20,  right: 50, bottom: 30, left: 90};
     if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 50;
     self.width = _width - margin.left - margin.right;
     self.height = _height - margin.top - margin.bottom;
