@@ -9,7 +9,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
     self.concurrent = _concurrent;
     self.instances = _instances;
     self.memory = false;
-
+    self.annotations = [];
     self.funcs = d3.set(self.timedata.map(function(d){return d.func_id;})).values(); // A list of function IDs
     self.stacks = d3.set(self.timedata.map(function(d){return d.stack;})).values(); // A list of possible concurrencies
     self.procs = []; // A list of processor IDs
@@ -29,12 +29,12 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
     if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 5;
 
     d3.select("#timelinecontainer").style("height",_height).style("width",_width + 30).style("margin-right",30);
-    if(self.procs.length <= 10){
+    if(self.procs.length <= 6){
         self.height = _height - margin.top - margin.bottom;
     }
     else{
 
-        self.height = (_height)*(self.procs.length/10) - margin.top - margin.bottom;
+        self.height = (_height)*(self.procs.length/6) - margin.top - margin.bottom;
     }
     self.width = _width - margin.left - margin.right;
     var maxtime = d3.max(self.timedata,function(d){return d.stop;});
@@ -124,7 +124,11 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
             return "<strong>Func_ID:</strong> <span style='color:red'>" + self.names[d.func_id] + "</span>";
         });
     self.svg.call(self.tip);
-
+    self.svg.on("mouseup",function(){
+        var xVal = d3.mouse(this)[0];
+        var stuff = self.x.invert(xVal);
+        var y = 0;
+    });
 
 
     self.color = d3.scale.ordinal().domain(self.funcs)// Manually defined colors. TODO: make automatic
@@ -139,9 +143,14 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
             .rangeRoundBands([self.y.rangeBand(),0]);
     }
 
-    self.svg.append("g")
+    d3.select("#xAxis")
+        .attr("width", self.width + margin.left + margin.right)
+        .attr("height",  margin.bottom).append("g")
+        .attr("transform", "translate(" + margin.left + ",0)")
+        .call(self.zoom)
+        .attr("width",self.width).append("g")
         .attr("class","x axis")
-        .attr("transform","translate(0,"+self.height+")")
+        .attr("transform","translate(0,0)")
         .call(self.xAxis);
 
 
@@ -255,6 +264,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .on('mouseover', self.tip.show)
         .on('mouseout', self.tip.hide)
         .on('mouseup', function (d) {
+
             var props = d3.select("#properties"); // Properties div
 
             var nl = "<br/>";
@@ -298,7 +308,7 @@ MainView.prototype.updateZoom = function(scale,translate){
     // Bound the view even when scaled (Note: X axis is reversed and goes from -width to 0)
     var xmov = Math.max(Math.min(translate,0),-self.width*scale + self.width);
     self.zoom.translate([xmov,0]); // Apply the panning movement
-    self.svg.select(".x.axis").call(self.xAxis); // Apply the movement to the scaled axis
+    d3.select("#xAxis").select(".x.axis").call(self.xAxis); // Apply the movement to the scaled axis
     self.subtasks.selectAll('.line').attr('d',self.line).attr("transform", "translate(" + (-xmov/scale) + ",0)scale(" + 1/scale + ",1)"); // This is really horrible
     self.taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + scale + ",1)");
 };
