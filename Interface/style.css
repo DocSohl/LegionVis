@@ -1,3 +1,7 @@
+h3 {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 .axis text {
     font: 10px sans-serif;
 }
@@ -57,11 +61,13 @@ text {
 
 /* http://stackoverflow.com/questions/5523735/how-to-make-a-radio-button-look-like-a-toggle-button */
 #histadjust {
+    font-family: Arial, Helvetica, sans-serif;
     margin: 2px;
     float:left;
 }
 
 #histadjust label {
+    font-size: 18px;
     float:left;
     width:100px;
     margin:2px;
@@ -80,8 +86,8 @@ text {
 
 #histadjust label span {
     text-align:center;
-    font-size: 24px;
-    padding:13px 0px;
+    font-size: 18px;
+    padding:5px 0px;
     display:block;
 }
 
@@ -134,9 +140,10 @@ text {
 }
 
 #mainadjust label span {
+    font-family: Arial, Helvetica, sans-serif;
     text-align:center;
-    font-size: 24px;
-    padding:13px 0px;
+    font-size: 18px;
+    padding:5px 0px;
     display:block;
 }
 
