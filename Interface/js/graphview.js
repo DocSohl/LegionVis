@@ -101,7 +101,7 @@ function GraphView(_timedata,_width,_height){
         .attr("class","node")
         .attr("transform",function(d){return "translate(" + d.y + "," + d.x + ")";})
         .append("circle")
-        .attr("r",function(d){return self.radius(d.duration);})
+        .attr("r",5)
         .style("fill",function(d){return mainview.color(d.func_id)})
         .on('mouseover', self.tip.show)
         .on('mouseout', self.tip.hide)
