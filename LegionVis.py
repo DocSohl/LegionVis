@@ -68,7 +68,19 @@ class Handler(SimpleHTTPRequestHandler):
                 self.end_headers()
                 copyfileobj(open('SharedData/'+id+'/tasks.json', 'r'), self.wfile)
                 return
-        if self.path == "/" or self.path == "/upload.html":
+        if self.path == "/" or self.path == '/index.html':
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/index.html', 'r'),self.wfile)
+        if self.path == "/tool.html":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/tool.html', 'r'),self.wfile)
+        if self.path == "/contact.html":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/contact.html', 'r'),self.wfile)
+        elif self.path == "/upload.html":
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/upload.html', 'r'),self.wfile)
@@ -96,10 +108,18 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(200, "OKAY")
             self.end_headers()
             copyfileobj(open('Interface/js/graphview.js', 'r'),self.wfile)
+        elif self.path == "/js/script.js":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/js/script.js', 'r'),self.wfile)
         elif self.path == "/style.css":
             self.send_response(200, "OKAY")
             self.end_headers()
-            copyfileobj(open('Interface/style.css', 'r'),self.wfile)		
+            copyfileobj(open('Interface/style.css', 'r'),self.wfile)	
+        elif self.path == "/webstyle.css":
+            self.send_response(200, "OKAY")
+            self.end_headers()
+            copyfileobj(open('Interface/webstyle.css', 'r'),self.wfile)	
         elif self.path == "/favicon.ico":
             self.send_response(200, "OKAY")
             self.end_headers()
