@@ -45,7 +45,14 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
         });
     }
     bins.sort(function(a, b){return a-b});
+    self.tip = d3.tip() // Set up tooltips on hover
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+            return "<strong>Func_ID:</strong> <span style='color:red'>" + mainview.names[d] + "</span>";
+        });
 
+    d3.select('#hist').call(self.tip);
     var margin = {top: 20, right: 30, bottom: 30, left: 60};
     if(maxval>100000){ // TODO: Make scaling proportional to number size
         margin.left = 80;
@@ -111,6 +118,8 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
         .attr("height",function(d){return histheight - y(binned[d]);})
         .attr("width", x.rangeBand())
         .style("fill",function(d){return mainview.color(d);});
-
     bars.exit().transition().remove();
+
+    bars.on('mouseover', self.tip.show)
+        .on('mouseout', self.tip.hide);
 };
