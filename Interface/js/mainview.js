@@ -180,32 +180,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .attr("height", self.height);
 
 
-    var svglegend = d3.select("#legend") // Set up the legend in a separate SVG
-        .attr("width",400)
-        .attr("height",20*self.funcs.length+30).append("g");
-
-    d3.select("#histcontainer").style("height",5/7 * _height + 20*self.funcs.length+30+13);
-
-    svglegend.append("text").attr("y",20).attr("x",50).text("Task Name"); // Legend title
-
-    var legend = svglegend.selectAll(".legend") // Generate legend based on entries
-        .data(self.funcs.slice())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(50," + ((i+1) * 20 + 10) + ")"; });
-
-    legend.append("rect") // Box to indicate color
-        .attr("x", 0)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", self.color);
-
-    legend.append("text")
-        .attr("x", 24)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "start")
-        .text(function(d) { return self.names[d]; });
+    
 
 
 
