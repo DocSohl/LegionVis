@@ -47,7 +47,7 @@ class Handler(SimpleHTTPRequestHandler):
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 </head><body><div id="header"><div><a href="index.html" class="logo"><h1>LegionViz</h1></a></div>
 <ul><li><a href="index.html">home</a></li><li class="selected"><a href="tool.html">tool</a></li><li><a href="contact.html">contact</a></li></ul></div>
-<div id="body"><div class="header"><p><a href="Shared/"""+str(id)+"""/display.html">Click here to access your visualization</a></p></div></div></body></html>        
+<div id="body"><div class="header"><p><a href='http://"""+form.headers.get('host')+"/Shared/"+str(id)+"""/display.html'>Click here to access your visualization</a></p></div></div></body></html>        
         """)
 
     def do_GET(self):
