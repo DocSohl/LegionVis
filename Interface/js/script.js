@@ -13,3 +13,11 @@ function test(){
         first = false;
     }
 }
+
+function getLink(){
+    var src = document.getElementById('responsedisplay').getAttribute("src");
+    var link = 'http://' + window.location.href.split('/')[2]  + src;
+    var a = document.getElementById('link');
+    a.href = link;
+    a.innerHTML = link
+}
