@@ -25,7 +25,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         if(!inProcs) self.procs.push(obj);
     });
 
-    var margin = {top: 20, right: 20, bottom: 30, left: 90};
+    var margin = {top: 20, right: 50, bottom: 30, left: 90};
     if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 50;
 
     d3.select("#timelinecontainer").style("height",_height).style("width",_width + 30).style("margin-right",30);
@@ -81,15 +81,24 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
             self.memorylines[key].push({x:maxtime,y:0, proc:key});
         }
     }
-
-
     self.memy = d3.scale.linear().domain([0,maxmem*1.1]).range([self.y.rangeBand(),0]);
 
     self.line = d3.svg.line()
         .x(function(d){return self.x(d.x);})
         .y(function(d){return self.memy(d.y);});
 
+    self.memyAxis = d3.svg.axis().scale(self.memy).orient("right").ticks(5);
 
+    for(var i = 0; i < self.procs.length; ++i) {
+        d3.select("#timeline").append("g")
+            .attr("transform", "translate(" + margin.left +"," + margin.top +")")
+            .attr("class","y axis")
+            .attr("width", margin.right)
+            .attr("height",  margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + self.width +","+self.y(self.procs[i].id) +")")
+            .call(self.memyAxis);
+    }
 
     self.zoom = d3.behavior.zoom() // Zoom only on the x dimension
         .scaleExtent([1,40])// TODO: These should be adjusted by total time
@@ -136,11 +145,6 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
             return "<strong>Func_ID:</strong> <span style='color:red'>" + self.names[d.func_id] + "</span>";
         });
     self.svg.call(self.tip);
-    self.svg.on("mouseup",function(){
-        var xVal = d3.mouse(this)[0];
-        var stuff = self.x.invert(xVal);
-        var y = 0;
-    });
 
 
     self.color = d3.scale.ordinal().domain(self.funcs)// Manually defined colors. TODO: make automatic
