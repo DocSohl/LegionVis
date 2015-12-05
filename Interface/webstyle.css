@@ -23,13 +23,13 @@ body {
         margin: 0;
         padding: 0 0 0 3px;
         text-decoration: none;
+
 }
 #header div .logo h1 {
-
+        text-shadow: 2px 2px #1f78b4;
         font-size: 60px;
         font-weight: normal;
         margin: 0 0 0 0;
-        text-shadow:2px 2px #000000;
         padding: 0;
         text-transform: capitalize;
 }
@@ -48,7 +48,6 @@ body {
         letter-spacing: 1px;
         margin: 15px 0 10px 0;
         padding: 0 30px 0 0;
-        text-shadow:1px 1px #000000;
         text-transform: uppercase;
 }
 #header div span b {
@@ -117,6 +116,7 @@ body {
 }
 #body .header h1 {
         color: #b2df8a;
+        text-shadow: 1px 1px #1f78b4;
         font-size: 38px;
         font-weight: normal;
         letter-spacing: 2px;
@@ -145,7 +145,8 @@ body {
         padding: 0 0 25px;
 }
 #body .body h1 a {
-    text-decoration:none;
+    text-shadow: 1px 1px #1f78b4;
+    text-decoration: none;
     color: #a6cee3;
 }
  
