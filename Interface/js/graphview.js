@@ -19,11 +19,11 @@ function GraphView(_timedata,_width,_height){
         .attr("width", self.width + margin.left + margin.right)
         .attr("height", self.height + margin.top + margin.bottom)
         .append("g").attr("transform","translate("+margin.left+","+margin.top+")")
-        .call(self.zoom)
-        .on("mousedown.zoom", null)
-        .on("touchstart.zoom", null)
-        .on("touchmove.zoom", null)
-        .on("touchend.zoom", null);
+        .call(self.zoom);
+        //.on("mousedown.zoom", null)
+        //.on("touchstart.zoom", null)
+        //.on("touchmove.zoom", null)
+        //.on("touchend.zoom", null);
 
     var rect = self.svg.append("rect")
         .attr("width", self.width)
@@ -57,38 +57,52 @@ function GraphView(_timedata,_width,_height){
     }
     self.active = true;
 
-    self.force = d3.layout.force()
-        .charge(-120)
-        .size([self.width,self.height])
-        .linkDistance(function(d){return (self.radius(d.source.duration) + self.radius(d.target.duration)) * 1.5;});
+    self.tree = d3.layout.tree()
+        .size([self.height,self.width - 160]);
 
-    self.links = [];
+    self.diagonal = d3.svg.diagonal()
+        .projection(function(d){return [d.y, d.x]});
+
+    var root;
     self.timedata.forEach(function(d){
         if(d.spawn != null){
+            var none = true;
             for(var i = 0; i < self.timedata.length; ++i){
                 if(d.spawn == self.timedata[i].task_id) {
-                    self.links.push({"source": self.timedata[i], "target": d});
+                    if(!self.timedata[i].hasOwnProperty("children")) self.timedata[i].children = [];
+                    self.timedata[i].children.push(d);
+                    none = false;
                     break;
                 }
             }
+            if(none){
+                root = d;
+            }
+        }
+        else{
+            root = d;
         }
     });
 
-    self.force.nodes(self.timedata)
-        .links(self.links)
-        .start();
+    if(root == undefined) return;
+
+    self.nodes = self.tree.nodes(root);
+    self.links = self.tree.links(self.nodes);
 
     var link = self.svg.selectAll(".link").data(self.links)
-        .enter().append("line")
-        .attr("class","link");
+        .enter().append("path")
+        .attr("class","link")
+        .attr("d",self.diagonal);
 
     var node = self.svg.selectAll(".node")
-        .data(self.timedata)
-        .enter().append("circle")
+        .data(self.nodes)
+        .enter()
+        .append("g")
         .attr("class","node")
+        .attr("transform",function(d){return "translate(" + d.y + "," + d.x + ")";})
+        .append("circle")
         .attr("r",function(d){return self.radius(d.duration);})
         .style("fill",function(d){return mainview.color(d.func_id)})
-        .call(self.force.drag)
         .on('mouseover', self.tip.show)
         .on('mouseout', self.tip.hide)
         .on('mouseup',function(d){
@@ -108,20 +122,5 @@ function GraphView(_timedata,_width,_height){
 
     node.append("title")
         .text(function(d){return d.task_id;});
-
-    self.force.on("tick", function(e){
-        self.timedata.forEach(function(d){
-            d.x += (d.start/maxtime - 0.5) * e.alpha * 40;
-        });
-
-        link.attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
-
-
-        node.attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
-    });
 
 };
