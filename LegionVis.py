@@ -41,7 +41,14 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         # This is hacky and horrible and I'll look into a better way.
-        self.wfile.write('/Shared/'+str(id)+'/display.html')
+        self.wfile.write(
+        """
+<!DOCTYPE html><html lang="en"><html><head><meta charset="UTF-8"><title>LegionViz</title><link rel="stylesheet" href="webstyle.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+</head><body><div id="header"><div><a href="index.html" class="logo"><h1>LegionViz</h1></a></div>
+<ul><li><a href="index.html">home</a></li><li class="selected"><a href="tool.html">tool</a></li><li><a href="contact.html">contact</a></li></ul></div>
+<div id="body"><div class="header"><p><a href="Shared/"""+str(id)+"""/display.html">Click here to access your visualization</a></p></div></div></body></html>        
+        """)
 
     def do_GET(self):
         print self.path

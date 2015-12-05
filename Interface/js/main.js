@@ -132,9 +132,12 @@ function Init(){
             e = d.documentElement,
             g = d.getElementsByTagName('body')[0],
             x = w.innerWidth || e.clientWidth || g.clientWidth,
-            y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50;
+            y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50 - 120;
 
-        d3.select("#summarycontainer").style("width",0.75*x);
+        d3.select("#summarycontainer").style("width",0.72*x+"px");
+        d3.select("#summarycontainer").style("height",y+"px");
+        d3.select("#timelinecontainer").style("width",0.72*x+"px");
+        d3.select("#timelinecontainer").style("height",0.7*y+"px");
         mainview = new MainView(timedata, names, concurrent, instances, 0.7 * x, 0.7 * y);
         mainview.update();
 
@@ -154,7 +157,7 @@ function Init(){
         histview.update("Count"); // Set up the histogram
 
         //Prepare the Graph view
-        d3.select("#graphcontainer").style("width",0.75*x);
+        d3.select("#graphcontainer").style("width",0.72*x+"px");
         graphview = new GraphView(timedata, 0.7*x, 0.9*y);
 
     });

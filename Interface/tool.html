@@ -33,21 +33,14 @@
                         </p>
 
                 <div style="display: block;">
-                    <form id="submission" enctype="multipart/form-data" method="post" target="responsedisplay">
+                    <form id="submission" enctype="multipart/form-data" method="post">
                         <span>Please upload a .log file for a Legion Profile.</span> <br /><br />
                         <input type="file" name="datafile" size="400000000" accept=".log, .txt"/>
                         <input type="submit" value="Submit">
                     </form>
                 </div>
             </div>
-            <div class="tool" style="display: none;">
-                <!--<iframe name="responsedisplay" width=100% height=800 frameBorder=0 />-->
-                <iframe name="responsedisplay" id="responsedisplay" width=100% height=800 frameBorder=0 onLoad="test();"></iframe>
-            </div>
-            <button onclick="getLink();">Get a link to this visualization!</button>
-            <a id="link"></a>
         </div>
-        <script language="javascript" src="js/script.js"></script>
         
 </body>
 </html>
