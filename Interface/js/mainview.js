@@ -10,11 +10,33 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
     self.instances = _instances;
     self.memory = false;
 
+    self.funcs = d3.set(self.timedata.map(function(d){return d.func_id;})).values(); // A list of function IDs
+    self.stacks = d3.set(self.timedata.map(function(d){return d.stack;})).values(); // A list of possible concurrencies
+    self.procs = []; // A list of processor IDs
+    self.timedata.forEach(function(d){
+        var obj = {id:d.proc_id, name: d.proc_kind};
+        var inProcs = false;
+        for(var i = 0; i < self.procs.length; ++i) {
+            if (obj.id == self.procs[i].id){
+                inProcs = true;
+                break;
+            }
+        }
+        if(!inProcs) self.procs.push(obj);
+    });
 
     var margin = {top: 20, right: 20, bottom: 30, left: 90};
-    if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 50;
+    if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 5;
+
+    d3.select("#timelinecontainer").style("height",_height).style("width",_width + 40);
+    if(self.procs.length <= 10){
+        self.height = _height - margin.top - margin.bottom;
+    }
+    else{
+
+        self.height = (_height)*(self.procs.length/10) - margin.top - margin.bottom;
+    }
     self.width = _width - margin.left - margin.right;
-    self.height = _height - margin.top - margin.bottom;
     var maxtime = d3.max(self.timedata,function(d){return d.stop;});
     self.x = d3.scale.linear().domain([0,maxtime]).range([0,self.width]);
     self.y = d3.scale.ordinal().domain(self.timedata.map(function(d){return d.proc_id;})).rangeRoundBands([0,self.height],0.1);
@@ -115,20 +137,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         });
     self.svg.call(self.tip);
 
-    self.funcs = d3.set(self.timedata.map(function(d){return d.func_id;})).values(); // A list of function IDs
-    self.stacks = d3.set(self.timedata.map(function(d){return d.stack;})).values(); // A list of possible concurrencies
-    self.procs = []; // A list of processor IDs
-    self.timedata.forEach(function(d){
-        var obj = {id:d.proc_id, name: d.proc_kind};
-        var inProcs = false;
-        for(var i = 0; i < self.procs.length; ++i) {
-            if (obj.id == self.procs[i].id){
-                inProcs = true;
-                break;
-            }
-        }
-        if(!inProcs) self.procs.push(obj);
-    });
+
 
     self.color = d3.scale.ordinal().domain(self.funcs)// Manually defined colors. TODO: make automatic
         .range(['#a6cee3','#b2df8a','#fb9a99','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928']);
