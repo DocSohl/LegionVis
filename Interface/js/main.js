@@ -5,6 +5,7 @@ var histview, mainview, graphview, summaryview;
 function Concurrency(data){
     this.rawData = data;
     this.parsedData = {};
+    this.dataIndex = {};
     this.maxStacks = {};
     this.rawData.sort(function(a,b){return a.start - b.start;});
     // Initial Parse
@@ -24,12 +25,18 @@ function Concurrency(data){
         cur.stack = count;
         this.maxStacks[proc] = Math.max(this.maxStacks[proc],count);
         this.parsedData[cur.task_id] = started.slice(0);
+        this.dataIndex[cur.task_id] = i;
         started = started.slice(0);
+        for(var j = 0; j < started.length; ++j){
+            if(this.parsedData.hasOwnProperty(started[j].task_id) && !(cur in this.parsedData[started[j].task_id])){
+                //console.log("added");
+                this.parsedData[started[j].task_id].push(cur);
+            }
+        }
         started.push(cur);
     }
 
-
-    this.atTime = function(t){
+    this.findClosest = function(t){
         var high = this.rawData.length - 1;
         var low = 0;
         while(high - low > 1){
@@ -44,10 +51,15 @@ function Concurrency(data){
             i = low;
         }
         if(closest.start > t){
-            if(i == 0) return [];
+            if(i == 0) return null;
             closest = this.rawData[--i];
         }
         if(closest.start > t || closest.stop < t) closest = this.broadSearch(t);
+        return closest
+    }
+
+    this.atTime = function(t){
+        var closest = this.findClosest(t);
         if(closest == null) return [];
         var concurrent = this.parsedData[closest.task_id];
         var output = [closest];
@@ -63,6 +75,46 @@ function Concurrency(data){
         }
         return null;
     };
+
+    this.integrate = function(t, dt){
+        var closest = this.findClosest(t);
+        if(closest == null) return [];
+        var within = [];
+        for(var i = this.dataIndex[closest.task_id]; i < this.rawData.length; ++i){
+            if(this.rawData[i].start > t + dt){
+                break;
+            }
+            if(this.rawData[i].stop > t) within.push(this.rawData[i]);
+        }
+        var output = [];
+        for(var i = 0; i < within.length; ++i){
+            var concurrent = this.parsedData[within[i].task_id];
+            if(within[i].start <= t + dt && within[i].stop >= t) {
+                var existing = false;
+                for(var k = 0; k < output.length; ++k) {
+                    if(output[k].task_id == within[i].task_id){
+                        existing = true;
+                        break;
+                    }
+                }
+                if(!existing) output.push(within[i]);
+            }
+            for(var j = 0; j < concurrent.length; ++j){
+                if(concurrent[j].start <= t + dt && concurrent[j].stop >= t) {
+                    var existing = false;
+                    for(var k = 0; k < output.length; ++k) {
+                        if(output[k].task_id == concurrent[j].task_id){
+                            existing = true;
+                            break;
+                        }
+                    }
+                    if(!existing) output.push(concurrent[j]);
+                }
+            }
+        }
+        return output;
+    };
+
     return this;
 }
 

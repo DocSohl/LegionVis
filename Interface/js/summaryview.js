@@ -24,15 +24,11 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
         mainview.funcs.forEach(function (d) {
             counts[d] = 0;
         });
-        for(var i = 0; i < 10; i++)
-        {
-            var rand = (Math.random()*stepsize)+t;
-            var tasks = self.concurrent.atTime(rand);
-            tasks.forEach(function (d) {
-                counts[d.func_id] += 1;
-                counts.total += 1;
-            });
-        }
+        var tasks = self.concurrent.integrate(t,stepsize);
+        tasks.forEach(function (d) {
+            counts[d.func_id] += 1;
+            counts.total += 1;
+        });
 
         var y0 = 0;
         counts.funcs = mainview.funcs.map(function (func_id) {

@@ -26,7 +26,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
     });
 
     var margin = {top: 20, right: 20, bottom: 30, left: 90};
-    if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 5;
+    if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 50;
 
     d3.select("#timelinecontainer").style("height",_height).style("width",_width + 30).style("margin-right",30);
     if(self.procs.length <= 6){
@@ -41,6 +41,17 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
     self.x = d3.scale.linear().domain([0,maxtime]).range([0,self.width]);
     self.y = d3.scale.ordinal().domain(self.timedata.map(function(d){return d.proc_id;})).rangeRoundBands([0,self.height],0.1);
 
+    self.stylusMove = function(){
+        var pos = d3.mouse(self.svg[0][0])[0];
+        d3.select("#stylus")
+            .attr("x1",pos)
+            .attr("x2",pos)
+            .moveToFront();
+        var converted = self.x.invert(pos);
+        if(histview.histCursorSelect) {
+            histview.update("Cursor",self.concurrent.atTime(converted));
+        }
+    };
 
     self.memorylines = {};
     self.timedata.forEach(function(d){
@@ -98,6 +109,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
 
 
     self.svg.append("rect") // Set up an invisible screen that allows zooming anywhere
+        .attr("class","invisible")
         .attr("width",self.width)
         .attr("height",self.height)
         .style("fill","none")
@@ -212,19 +224,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .attr("width",self.width+2)
         .attr("height",self.y.rangeBand()+2) // Extra padding to allow a border
         .style("fill","white")
-        .on("mousemove",function(){
-        d3.select("#stylus")
-            .attr("x1",d3.mouse(this)[0])
-            .attr("x2",d3.mouse(this)[0])
-            .moveToFront();
-        var converted = self.x.invert(d3.mouse(this)[0]);
-        if(histview.histCursorSelect) {
-            histview.update("Cursor",self.concurrent.atTime(converted));
-        }
-        else{
-
-        }
-    });
+        .on("mousemove",self.stylusMove);
 
 
     tasks.append("text") // Name of the processor
@@ -271,13 +271,14 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
             var output = "Name: " + self.names[d.func_id] + nl +
                 "Task ID: " + d.task_id + nl +
                 "Function ID: " + d.func_id + nl +
-                "Processor: " + d.proc_id + nl +
+                "Processor: " + d.proc_kind + " 0x" + parseInt(d.proc_id).toString(16).toUpperCase() + nl +
                 "Start: " + Math.round(d.start) + " &mu;s" + nl +
                 "Stop: " + Math.round(d.stop) + " &mu;s" + nl +
                 "Duration: " + Math.round(d.stop - d.start) + " &mu;s";
 
             props.html(output); // TODO: Fix this to prevent XSS
-        });
+        })
+        .on("mousemove",self.stylusMove);
     tasks.exit().remove();
 
     self.subtasks.append("path")
@@ -286,6 +287,8 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         })
         .attr("class","line")
         .attr("d",self.line);
+
+
 }
 
 MainView.prototype.update = function(){
@@ -302,6 +305,7 @@ MainView.prototype.update = function(){
         self.subtasks.selectAll(".line").style("stroke","steelblue");
     }
 };
+
 MainView.prototype.updateZoom = function(scale,translate){
     var self = this;
     //console.log(translate);
