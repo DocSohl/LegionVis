@@ -53,7 +53,7 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
         });
 
     d3.select('#hist').call(self.tip);
-    var margin = {top: 20, right: 30, bottom: 30, left: 60};
+    var margin = {top: 20, right: 30, bottom: 100, left: 60};
     if(maxval>100000){ // TODO: Make scaling proportional to number size
         margin.left = 80;
     }
@@ -78,7 +78,12 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
 
         chart.append("g").attr("class","x axis")
             .attr("transform","translate(0," + histheight + ")")
-            .call(histxAxis);
+            .call(histxAxis)
+            .selectAll("text")
+            .style("text-anchor","end")
+            .attr("dx","-0.5em")
+            .attr("dy",-5)
+            .attr("transform", "rotate(-90)" );
 
         chart.append("g").attr("class","y axis")
             .call(histyAxis);
