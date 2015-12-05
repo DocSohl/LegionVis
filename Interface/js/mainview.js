@@ -28,7 +28,7 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
     var margin = {top: 20, right: 20, bottom: 30, left: 90};
     if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 5;
 
-    d3.select("#timelinecontainer").style("height",_height).style("width",_width + 40);
+    d3.select("#timelinecontainer").style("height",_height).style("width",_width + 30).style("margin-right",30);
     if(self.procs.length <= 10){
         self.height = _height - margin.top - margin.bottom;
     }

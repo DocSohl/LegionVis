@@ -83,10 +83,10 @@ function Init(){
             y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50;
 
         d3.select("#summarycontainer").style("width",0.8*x);
-        mainview = new MainView(timedata, names, concurrent, instances, 0.8 * x, 0.7 * y);
+        mainview = new MainView(timedata, names, concurrent, instances, 0.7 * x, 0.7 * y);
         mainview.update();
 
-        summaryview = new SummaryView(timedata, names, concurrent, 0.8 * x, 0.2 * y);
+        summaryview = new SummaryView(timedata, names, concurrent, 0.7 * x, 0.2 * y);
 
         histview = new HistogramView(timedata, 0.2 * x, 0.5 * y);
         d3.select("#histcount").on("change",function(){
