@@ -53,52 +53,52 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         }
     };
 
-    self.memorylines = {};
-    self.timedata.forEach(function(d){
-        if(!(d.proc_id in self.memorylines)){
-            self.memorylines[d.proc_id] = [{x:0,y:0, proc:d.proc_id}];
-        }
-    });
+    //self.memorylines = {};
+    //self.timedata.forEach(function(d){
+    //    if(!(d.proc_id in self.memorylines)){
+    //        self.memorylines[d.proc_id] = [{x:0,y:0, proc:d.proc_id}];
+    //    }
+    //});
     //this.instances.sort(function(a,b){return a.create - b.create;});
-    var events = [];
-    for(var i = 0; i < self.instances.length; ++i){
-        events.push({key:self.instances[i].create,  val:self.instances[i], type:true});
-        events.push({key:self.instances[i].destroy, val:self.instances[i], type:false});
-    }
-    events.sort(function(a,b){return a.key - b.key;});
-    var maxmem = 0;
-    for(var i = 0; i < events.length; ++i){
-        var event = events[i];
-        var proc = self.memorylines[event.val.proc_id];
-        var last = proc[proc.length-1].y;
-        proc.push({x:event.key, y:last, proc:event.val.proc_id});
-        proc.push({x:event.key, y:last + (event.val.size * (event.type ? 1 : -1)), proc:event.val.proc_id});
-        maxmem = Math.max(maxmem,proc[proc.length-1].y);
-    }
+    //var events = [];
+    //for(var i = 0; i < self.instances.length; ++i){
+    //    events.push({key:self.instances[i].create,  val:self.instances[i], type:true});
+    //    events.push({key:self.instances[i].destroy, val:self.instances[i], type:false});
+    //}
+    //events.sort(function(a,b){return a.key - b.key;});
+    //var maxmem = 0;
+    //for(var i = 0; i < events.length; ++i){
+    //    var event = events[i];
+    //    var proc = self.memorylines[event.val.proc_id];
+    //    var last = proc[proc.length-1].y;
+    //    proc.push({x:event.key, y:last, proc:event.val.proc_id});
+    //    proc.push({x:event.key, y:last + (event.val.size * (event.type ? 1 : -1)), proc:event.val.proc_id});
+    //    maxmem = Math.max(maxmem,proc[proc.length-1].y);
+    //}
+    //
+    //for(var key in self.memorylines){
+    //    if(self.memorylines.hasOwnProperty(key)){
+    //        self.memorylines[key].push({x:maxtime,y:0, proc:key});
+    //    }
+    //}
+    //self.memy = d3.scale.linear().domain([0,maxmem*1.1]).range([self.y.rangeBand(),0]);
+    //
+    //self.line = d3.svg.line()
+    //    .x(function(d){return self.x(d.x);})
+    //    .y(function(d){return self.memy(d.y);});
+    //
+    //self.memyAxis = d3.svg.axis().scale(self.memy).orient("right").ticks(5);
 
-    for(var key in self.memorylines){
-        if(self.memorylines.hasOwnProperty(key)){
-            self.memorylines[key].push({x:maxtime,y:0, proc:key});
-        }
-    }
-    self.memy = d3.scale.linear().domain([0,maxmem*1.1]).range([self.y.rangeBand(),0]);
-
-    self.line = d3.svg.line()
-        .x(function(d){return self.x(d.x);})
-        .y(function(d){return self.memy(d.y);});
-
-    self.memyAxis = d3.svg.axis().scale(self.memy).orient("right").ticks(5);
-
-    for(var i = 0; i < self.procs.length; ++i) {
-        d3.select("#timeline").append("g")
-            .attr("transform", "translate(" + margin.left +"," + margin.top +")")
-            .attr("class","y axis")
-            .attr("width", margin.right)
-            .attr("height",  margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + self.width +","+self.y(self.procs[i].id) +")")
-            .call(self.memyAxis);
-    }
+    //for(var i = 0; i < self.procs.length; ++i) {
+    //    d3.select("#timeline").append("g")
+    //        .attr("transform", "translate(" + margin.left +"," + margin.top +")")
+    //        .attr("class","y axis")
+    //        .attr("width", margin.right)
+    //        .attr("height",  margin.bottom)
+    //        .append("g")
+    //        .attr("transform", "translate(" + self.width +","+self.y(self.procs[i].id) +")")
+    //        .call(self.memyAxis);
+    //}
 
     self.zoom = d3.behavior.zoom() // Zoom only on the x dimension
         .scaleExtent([1,40])// TODO: These should be adjusted by total time
@@ -262,12 +262,12 @@ function MainView(_timedata, _names, _concurrent, _instances, _width, _height){
         .on("mousemove",self.stylusMove);
     tasks.exit().remove();
 
-    self.subtasks.append("path")
-        .datum(function(d){
-            return self.memorylines[d.id];
-        })
-        .attr("class","line")
-        .attr("d",self.line);
+    //self.subtasks.append("path")
+    //    .datum(function(d){
+    //        return self.memorylines[d.id];
+    //    })
+    //    .attr("class","line")
+    //    .attr("d",self.line);
 
 
 }
@@ -279,11 +279,11 @@ MainView.prototype.update = function(){
         self.subtasks.selectAll(".task").style("fill", function (d) {
                 return self.color(d.func_id);
             });
-        self.subtasks.selectAll(".line").style("stroke","steelblue");
+        //self.subtasks.selectAll(".line").style("stroke","steelblue");
     }
     else{
         self.subtasks.selectAll(".task").style("fill","none");
-        self.subtasks.selectAll(".line").style("stroke","steelblue");
+        //self.subtasks.selectAll(".line").style("stroke","steelblue");
     }
 };
 
@@ -294,6 +294,6 @@ MainView.prototype.updateZoom = function(scale,translate){
     var xmov = Math.max(Math.min(translate,0),-self.width*scale + self.width);
     self.zoom.translate([xmov,0]); // Apply the panning movement
     d3.select("#xAxis").select(".x.axis").call(self.xAxis); // Apply the movement to the scaled axis
-    self.subtasks.selectAll('.line').attr('d',self.line).attr("transform", "translate(" + (-xmov/scale) + ",0)scale(" + 1/scale + ",1)"); // This is really horrible
+    //self.subtasks.selectAll('.line').attr('d',self.line).attr("transform", "translate(" + (-xmov/scale) + ",0)scale(" + 1/scale + ",1)"); // This is really horrible
     self.taskcontainer.selectAll(".subtasks").attr("transform", "translate(" + xmov + ",0)scale(" + scale + ",1)");
 };
