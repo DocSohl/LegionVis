@@ -125,7 +125,6 @@ function Init(){
     d3.json("tasks.json",function(data){ // Load all task information from the server
         var timedata = data[0]; // An array of task objects
         var names = data[1]; // A map of function IDs to task names
-        var instances = data[2];
         var concurrent = new Concurrency(timedata);
         var w = window,
             d = document,
@@ -138,7 +137,7 @@ function Init(){
         d3.select("#summarycontainer").style("height",y+"px");
         d3.select("#timelinecontainer").style("width",0.72*x+"px");
         d3.select("#timelinecontainer").style("height",0.7*y+"px");
-        mainview = new MainView(timedata, names, concurrent, instances, 0.7 * x, 0.7 * y);
+        mainview = new MainView(timedata, names, concurrent, 0.7 * x, 0.7 * y);
         mainview.update();
 
         summaryview = new SummaryView(timedata, names, concurrent, 0.7 * x, 0.2 * y);

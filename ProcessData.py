@@ -14,7 +14,6 @@ processor_kinds = {
 def analyze(data):
     tasks = []
     taskmap = {}
-    instances = []
     names = {}
     procs = {}
     for line in data:
@@ -37,26 +36,13 @@ def analyze(data):
         if match is not None:
             names[int(match.group('fid'))] = match.group('name')
         #match = re.compile(prefix + r'Prof Meta Info (?P<opid>[0-9]+) (?P<hlr>[0-9]+) (?P<pid>[a-f0-9]+) (?P<create>[0-9]+) (?P<ready>[0-9]+) (?P<start>[0-9]+) (?P<stop>[0-9]+)').match(line)
-        match = re.compile(prefix + r'Prof Inst Info (?P<opid>[0-9]+) (?P<inst>[a-f0-9]+) (?P<mem>[a-f0-9]+) (?P<bytes>[0-9]+) (?P<create>[0-9]+) (?P<destroy>[0-9]+)').match(line)
-        if match is not None:
-            newinstance = {
-                "op_id" : long(match.group('opid')),
-                "inst_id" : int(match.group('inst'),16),
-                "mem_id" : int(match.group('mem'),16),
-                "size" : long(match.group('bytes')),
-                "create" : long(match.group('create'))/1000,
-                "destroy" : long(match.group('destroy'))/1000            
-            }
-            if newinstance["op_id"] in taskmap:
-                newinstance["proc_id"] = taskmap[newinstance["op_id"]]["proc_id"]
-                instances.append(newinstance)
         match = re.compile(prefix + r'Prof Proc Desc (?P<pid>[a-f0-9]+) (?P<kind>[0-9]+)').match(line)
         if match is not None:
             kind = int(match.group('kind'))
             procs[int(match.group('pid'),16)] = processor_kinds[kind]
     for task in tasks:
         task["proc_kind"] = procs[task["proc_id"]]
-    return tasks, names, instances
+    return tasks, names
 
 
 def fromFile(fname):
