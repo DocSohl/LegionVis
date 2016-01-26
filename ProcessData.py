@@ -5,10 +5,10 @@ import re
 prefix = r'\[(?P<node>[0-9]+) - (?P<thread>[0-9a-f]+)\] \{\w+\}\{legion_prof\}: '
 
 processor_kinds = {
-    0 : 'GPU',
-    1 : 'CPU',
-    2 : 'Utility',
-    3 : 'I/O',
+    1 : 'GPU',
+    2 : 'CPU',
+    3 : 'Utility',
+    4 : 'I/O',
 }
 
 def analyze(data):
@@ -33,7 +33,7 @@ def analyze(data):
             if match.group('spawn') is not None:
                 tasks[-1]["spawn"] = int(match.group('spawn'))            
             taskmap[tasks[-1]["task_id"]] = tasks[-1]
-        match = re.compile(prefix + r'Prof Task Variant (?P<fid>[0-9]+) (?P<name>[a-zA-Z0-9_]+)').match(line)
+        match = re.compile(prefix + r'Prof Task Variant (?P<fid>[0-9]+) (?P<name>[a-zA-Z0-9_<>.]+)').match(line)
         if match is not None:
             names[int(match.group('fid'))] = match.group('name')
         #match = re.compile(prefix + r'Prof Meta Info (?P<opid>[0-9]+) (?P<hlr>[0-9]+) (?P<pid>[a-f0-9]+) (?P<create>[0-9]+) (?P<ready>[0-9]+) (?P<start>[0-9]+) (?P<stop>[0-9]+)').match(line)
