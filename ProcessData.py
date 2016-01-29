@@ -14,7 +14,9 @@ processor_kinds = {
 def analyze(data):
     tasks = []
     taskmap = {}
+    tidnames = {}
     names = {}
+    tid2vid = {}
     procs = {}
     for line in data:
         match = re.compile(prefix + r'Prof Task Info (?P<tid>[0-9]+) (?P<fid>[0-9]+) (?P<pid>[a-f0-9]+) (?P<create>[0-9]+) (?P<ready>[0-9]+) (?P<start>[0-9]+) (?P<stop>[0-9]+)( (?P<spawn>[0-9]+))?').match(line)
@@ -34,12 +36,17 @@ def analyze(data):
             taskmap[tasks[-1]["task_id"]] = tasks[-1]
         match = re.compile(prefix + r'Prof Task Kind (?P<tid>[0-9]+) (?P<name>[a-zA-Z0-9_<>.]+)').match(line)
         if match is not None:
-            names[int(match.group('tid'))] = match.group('name')
+            tidnames[int(match.group('tid'))] = match.group('name')
+	match = re.compile(prefix + r'Prof Task Variant (?P<tid>[0-9]+) (?P<vid>[0-9]+) (?P<name>[a-zA-Z0-9_<>.]+)').match(line)
+	if match is not None:
+	    tid2vid[int(match.group('tid'))] = int(match.group('vid'))
         #match = re.compile(prefix + r'Prof Meta Info (?P<opid>[0-9]+) (?P<hlr>[0-9]+) (?P<pid>[a-f0-9]+) (?P<create>[0-9]+) (?P<ready>[0-9]+) (?P<start>[0-9]+) (?P<stop>[0-9]+)').match(line)
         match = re.compile(prefix + r'Prof Proc Desc (?P<pid>[a-f0-9]+) (?P<kind>[0-9]+)').match(line)
         if match is not None:
             kind = int(match.group('kind'))
             procs[int(match.group('pid'),16)] = processor_kinds[kind]
+    for n in tidnames:
+        names[tid2vid[n]] = tidnames[n]
     for task in tasks:
         task["proc_kind"] = procs[task["proc_id"]]
     return tasks, names
