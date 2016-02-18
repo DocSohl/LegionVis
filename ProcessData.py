@@ -46,7 +46,8 @@ def analyze(data):
             kind = int(match.group('kind'))
             procs[int(match.group('pid'),16)] = processor_kinds[kind]
     for n in tidnames:
-        names[tid2vid[n]] = tidnames[n]
+	if n in tid2vid:
+	    names[tid2vid[n]] = tidnames[n]
     for task in tasks:
         task["proc_kind"] = procs[task["proc_id"]]
     return tasks, names
@@ -60,7 +61,7 @@ def fromFile(fname):
 
 if __name__=="__main__":
     # Load the file
-    test = open("data/PROFSimple.log", "r")
+    test = open("Data/normal.log", "r")
     testdata = test.readlines()
     result = analyze(testdata)
     print result
