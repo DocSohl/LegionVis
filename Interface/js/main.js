@@ -170,6 +170,7 @@ function resizeViews(){
     d3.select("#summary").select("g").remove();
     d3.select("#hist").select("g").remove();
     d3.select("#legend").select("g").remove();
+    d3.select("#xAxis").select("g").remove();
 
 
 
