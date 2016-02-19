@@ -59,6 +59,7 @@ def analyze(data):
 	proclist.append({'id':procPretty(proc),'name':procs[proc]})
     for task in tasks:
         task["proc_kind"] = procs[task["proc_id"]]
+	task["proc_id"] = procPretty(task["proc_id"])
     return tasks, names, proclist
 
 
