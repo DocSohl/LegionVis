@@ -204,4 +204,4 @@ function switchViews(viewname){
     }
 }
 
-//Init(); // Set up the page
+Init(); // Set up the page
