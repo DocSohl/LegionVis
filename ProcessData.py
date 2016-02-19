@@ -24,7 +24,7 @@ def analyze(data):
             tasks.append({
                 "task_id" : long(match.group('tid')),
                 "func_id" : int(match.group('fid')),
-                "proc_id" : int(match.group('pid'), 16),
+                "proc_id" : str(int(match.group('pid'), 16)),
                 "create" : long(match.group('create'))/1000,
                 "ready" : long(match.group('ready'))/1000,
                 "start" : long(match.group('start'))/1000,
@@ -44,7 +44,7 @@ def analyze(data):
         match = re.compile(prefix + r'Prof Proc Desc (?P<pid>[a-f0-9]+) (?P<kind>[0-9]+)').match(line)
         if match is not None:
             kind = int(match.group('kind'))
-            procs[int(match.group('pid'),16)] = processor_kinds[kind]
+            procs[str(int(match.group('pid'),16))] = processor_kinds[kind]
     for n in tidnames:
 	if n in tid2vid:
 	    names[tid2vid[n]] = tidnames[n]
