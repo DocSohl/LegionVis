@@ -1,28 +1,31 @@
 /**
  * Created by Phil on 11/30/2015.
  */
-function MainView(_timedata, _names, _concurrent, _width, _height){
+function MainView(_timedata, _names, _procs, _concurrent, _width, _height){
     var self = this;
 
     self.timedata = _timedata;
     self.names = _names;
+    self.procs = _procs;
     self.concurrent = _concurrent;
     self.memory = false;
     self.annotations = [];
     self.funcs = d3.set(self.timedata.map(function(d){return d.func_id;})).values(); // A list of function IDs
     self.stacks = d3.set(self.timedata.map(function(d){return d.stack;})).values(); // A list of possible concurrencies
-    self.procs = []; // A list of processor IDs
-    self.timedata.forEach(function(d){
-        var obj = {id:d.proc_id, name: d.proc_kind};
-        var inProcs = false;
-        for(var i = 0; i < self.procs.length; ++i) {
-            if (obj.id == self.procs[i].id){
-                inProcs = true;
-                break;
+    if(self.procs == null) {
+        self.procs = []; // A list of processor IDs
+        self.timedata.forEach(function (d) {
+            var obj = {id: d.proc_id, name: d.proc_kind};
+            var inProcs = false;
+            for (var i = 0; i < self.procs.length; ++i) {
+                if (obj.id == self.procs[i].id) {
+                    inProcs = true;
+                    break;
+                }
             }
-        }
-        if(!inProcs) self.procs.push(obj);
-    });
+            if (!inProcs) self.procs.push(obj);
+        });
+    }
 
     var margin = {top: 20, right: 50, bottom: 30, left: 90};
     if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 50;

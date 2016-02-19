@@ -11,6 +11,12 @@ processor_kinds = {
     4 : 'I/O',
 }
 
+def procPretty(proc):
+    h = hex(long(proc))
+    node = str(int(h[3:7],16))
+    proc = str(int(h[7:-1],16))
+    return "Node: %s Processor: %s" % (node,proc)
+
 def analyze(data):
     tasks = []
     taskmap = {}
@@ -48,9 +54,12 @@ def analyze(data):
     for n in tidnames:
 	if n in tid2vid:
 	    names[tid2vid[n]] = tidnames[n]
+    proclist = []
+    for proc in procs:
+	proclist.append({'id':procPretty(proc),'name':procs[proc]})
     for task in tasks:
         task["proc_kind"] = procs[task["proc_id"]]
-    return tasks, names
+    return tasks, names, proclist
 
 
 def fromFile(fname):
