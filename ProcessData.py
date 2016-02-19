@@ -56,7 +56,8 @@ def analyze(data):
 	    names[tid2vid[n]] = tidnames[n]
     proclist = []
     for proc in procs:
-	proclist.append({'id':procPretty(proc),'name':procs[proc]})
+	proclist.append({'num':long(proc), 'id':procPretty(proc),'name':procs[proc]})
+    proclist.sort(key=lambda x: x['num'])
     for task in tasks:
         task["proc_kind"] = procs[task["proc_id"]]
 	task["proc_id"] = procPretty(task["proc_id"])

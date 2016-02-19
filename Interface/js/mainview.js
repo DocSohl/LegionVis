@@ -27,8 +27,7 @@ function MainView(_timedata, _names, _procs, _concurrent, _width, _height){
         });
     }
 
-    var margin = {top: 20, right: 50, bottom: 30, left: 90};
-    if(parseInt(self.timedata[0].proc_id) > 100) margin.left += 50;
+    var margin = {top: 20, right: 50, bottom: 30, left: 190};
 
     d3.select("#timelinecontainer").style("height",_height).style("width",_width + 30).style("margin-right",30);
     if(self.procs.length <= 6){
@@ -41,7 +40,7 @@ function MainView(_timedata, _names, _procs, _concurrent, _width, _height){
     self.width = _width - margin.left - margin.right;
     var maxtime = d3.max(self.timedata,function(d){return d.stop;});
     self.x = d3.scale.linear().domain([0,maxtime]).range([0,self.width]);
-    self.y = d3.scale.ordinal().domain(self.timedata.map(function(d){return d.proc_id;})).rangeRoundBands([0,self.height],0.1);
+    self.y = d3.scale.ordinal().domain(self.procs.map(function(d){return d.id;})).rangeRoundBands([0,self.height],0.1);
 
     self.stylusMove = function(){
         var pos = d3.mouse(self.svg[0][0])[0];
@@ -168,7 +167,7 @@ function MainView(_timedata, _names, _procs, _concurrent, _width, _height){
         .style("text-anchor", "end")
         .attr("x",-10)
         .attr("y",self.y.rangeBand()/2)
-        .text(function(d){return d.name + " 0x" + parseInt(d.id).toString(16).toUpperCase();})
+        .text(function(d){return d.name + " " + d.id})
         .on("mousemove",null);
 
     var clipg = tasks.append("g") // Limit the actual task boxes by the clipping window
