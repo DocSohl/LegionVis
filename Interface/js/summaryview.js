@@ -8,7 +8,7 @@ function SummaryView(_timedata, _names, _concurrent,_width,_height) {
     self.timedata = _timedata;
     self.names = _names;
     self.concurrent = _concurrent;
-    var margin = {top: 20,  right: 50, bottom: 30, left: 190};
+    var margin = {top: 10,  right: 50, bottom: 20, left: 190};
     self.width = _width - margin.left - margin.right;
     self.height = _height - margin.top - margin.bottom;
     var maxtime = d3.max(self.timedata,function(d){return d.stop;});
