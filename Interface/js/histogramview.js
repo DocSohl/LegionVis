@@ -49,7 +49,7 @@ HistogramView.prototype.update = function(checkedOption, histTasks){
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
-            return "<strong>Func_ID:</strong> <span style='color:red'>" + mainview.names[d] + "</span>";
+            return mainview.names[d] + " : " + parseInt(binned[d]);
         });
 
     d3.select('#hist').call(self.tip);

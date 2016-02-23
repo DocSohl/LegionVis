@@ -96,7 +96,7 @@ function MainView(_timedata, _names, _procs, _concurrent, _width, _height){
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function(d) {
-            return "<strong>Func_ID:</strong> <span style='color:red'>" + self.names[d.func_id] + "</span>";
+            return self.names[d.func_id];
         });
     self.svg.call(self.tip);
 
@@ -206,7 +206,7 @@ function MainView(_timedata, _names, _procs, _concurrent, _width, _height){
             var output = "Name: " + self.names[d.func_id] + nl +
                 "Task ID: " + d.task_id + nl +
                 "Function ID: " + d.func_id + nl +
-                "Processor: " + d.proc_kind + " 0x" + parseInt(d.proc_id).toString(16).toUpperCase() + nl +
+                "Processor: " + d.proc_id + nl +
                 "Start: " + Math.round(d.start) + " &mu;s" + nl +
                 "Stop: " + Math.round(d.stop) + " &mu;s" + nl +
                 "Duration: " + Math.round(d.stop - d.start) + " &mu;s";
