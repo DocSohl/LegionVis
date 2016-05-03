@@ -121,47 +121,40 @@ function Concurrency(data){
 /**
  * Loads data, prepares and populates all D3 components. Only run once
  */
-function Init(){
-    d3.json("tasks.json",function(data){ // Load all task information from the server
-        var timedata = data[0]; // An array of task objects
-        var names = data[1]; // A map of function IDs to task names
-        var procs = null;
-        if(data.length==3) procs = data[2];
-        var concurrent = new Concurrency(timedata);
-        var w = window,
-            d = document,
-            e = d.documentElement,
-            g = d.getElementsByTagName('body')[0],
-            x = w.innerWidth || e.clientWidth || g.clientWidth,
-            y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50 - 120;
+function Init(timedata, names,procs){// Load all task information from the server
+    var concurrent = new Concurrency(timedata);
+    var w = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementsByTagName('body')[0],
+        x = w.innerWidth || e.clientWidth || g.clientWidth,
+        y = (w.innerHeight|| e.clientHeight|| g.clientHeight) - 50 - 120;
 
-        d3.select("#summarycontainer").style("width",0.72*x+"px");
-        d3.select("#summarycontainer").style("height",y+"px");
-        d3.select("#timelinecontainer").style("width",0.72*x+"px");
-        d3.select("#timelinecontainer").style("height",0.7*y+"px");
-        mainview = new MainView(timedata, names, procs, concurrent, 0.7 * x, 0.7 * y);
-        mainview.update();
+    d3.select("#summarycontainer").style("width",0.72*x+"px");
+    d3.select("#summarycontainer").style("height",y+"px");
+    d3.select("#timelinecontainer").style("width",0.72*x+"px");
+    d3.select("#timelinecontainer").style("height",0.7*y+"px");
+    mainview = new MainView(timedata, names, procs, concurrent, 0.7 * x, 0.7 * y);
+    mainview.update();
 
-        summaryview = new SummaryView(timedata, names, concurrent, 0.7 * x, 0.2 * y);
+    summaryview = new SummaryView(timedata, names, concurrent, 0.7 * x, 0.2 * y);
 
-        histview = new HistogramView(timedata, 0.2 * x, 0.5 * y);
-        d3.select("#histcount").on("change",function(){
-            histview.update("Count");
-        });
-        d3.select("#histtime").on("change",function(){
-            histview.update("Time");
-        });
-        d3.select("#histcursor").on("change",function(){
-            histview.histCursorSelect = true;
-        });
-
-        histview.update("Count"); // Set up the histogram
-
-        //Prepare the Graph view
-        d3.select("#graphcontainer").style("width",0.72*x+"px");
-        graphview = new GraphView(timedata, 0.7*x, 0.9*y);
-
+    histview = new HistogramView(timedata, 0.2 * x, 0.5 * y);
+    d3.select("#histcount").on("change",function(){
+        histview.update("Count");
     });
+    d3.select("#histtime").on("change",function(){
+        histview.update("Time");
+    });
+    d3.select("#histcursor").on("change",function(){
+        histview.histCursorSelect = true;
+    });
+
+    histview.update("Count"); // Set up the histogram
+
+    //Prepare the Graph view
+    d3.select("#graphcontainer").style("width",0.72*x+"px");
+    graphview = new GraphView(timedata, 0.7*x, 0.9*y);
 }
 
 function resizeViews(){
@@ -173,8 +166,7 @@ function resizeViews(){
     d3.select("#xAxis").select("g").remove();
 
 
-
-    Init();
+    Init(window.legiondata.tasks, window.legiondata.names,window.legiondata.proclist);
 }
 
 d3.selection.prototype.moveToFront = function() {
@@ -204,4 +196,28 @@ function switchViews(viewname){
     }
 }
 
-Init(); // Set up the page
+function fileInit(){
+    var fileInput = d3.select("#fileInput");
+    var fileSubmit = d3.select("#fileSubmit");
+    fileSubmit.on("click",function(){
+        var fi = fileInput[0][0];
+        var files = fi.files;
+        if(files.length >=1) {
+            var file = files[0];
+            var fr = new FileReader();
+            fr.onload = function(e) {
+                window.legiondata = window.analyzeLegionData(e.target.result);
+                var q = 0;
+                var vis = d3.select("#visualization");
+                vis.style("display","block");
+                var processingForm = d3.select("#processingForm");
+                processingForm.style("display","none");
+                Init(window.legiondata.tasks, window.legiondata.names,window.legiondata.proclist);
+
+            };
+            fr.readAsText(file);
+
+        }
+    });
+}
+fileInit();

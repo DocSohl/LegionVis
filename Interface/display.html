@@ -35,6 +35,15 @@
     </ul>
 </div>
 <div id="body">
+    <div id="processingForm">
+
+            <input type="file" id="fileInput"><br>
+            <input type="radio" name="processing" value="local" checked>Process Locally<br>
+            <input type="radio" name="processing" value="server"> Process on Server (Allows for link sharing)<br>
+            <input id="fileSubmit" type="button" value="Submit">
+
+    </div>
+    <div id = "visualization" style="display: none;">
     <div id="mainadjust">
         <label class="timeline"><input type="radio" name="toggle" onchange="switchViews('timeline');" id="maintimeline" checked><span>Timeline</span></label>
         <label class="graph"><input type="radio" name="toggle" onchange="switchViews('graph');" id="maingraph"><span>Graph</span></label>
@@ -73,5 +82,6 @@
         <br />
     </div>
     <script src="js/main.js"></script>
+    </div>
 </div>
 </body>

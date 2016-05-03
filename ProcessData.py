@@ -72,7 +72,7 @@ def fromFile(fname):
 
 if __name__=="__main__":
     # Load the file
-    test = open("Data/normal.log", "r")
+    test = open("Data/PROFSimple.log", "r")
     testdata = test.readlines()
     result = analyze(testdata)
     print result

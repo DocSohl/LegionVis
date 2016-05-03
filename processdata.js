@@ -14,12 +14,15 @@
 
     var procPretty = function(proc){
         var h = Number(proc).toString(16);
+        while(h.length < 8){
+            h = "0" + h;
+        }
         var node = String(parseInt(h.slice(3,7),16));
-        proc = String(parseInt(h.slice(7,-1),16));
+        proc = String(parseInt(h.charAt(7),16));
         return "Node: " + node + " Processor: " + proc;
     };
 
-    var analyze = function(data){
+    var analyzeLegionData = function(data){
         var tasks = [];
         var taskmap = {};
         var tidnames = {};
@@ -61,11 +64,11 @@
                 procs[String(parseInt(info[3],16))] = processor_kinds[kind];
             }
         });
-        tidnames.forEach(function(n) {
+        Object.keys(tidnames).forEach(function(n) {
             names[tid2vid[n]] = tidnames[n];
         });
         var proclist = [];
-        procs.forEach(function(proc){
+        Object.keys(procs).forEach(function(proc){
             proclist.push({
                 'num':Number(proc),
                 'id':procPretty(proc),
@@ -87,9 +90,9 @@
     };
 
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
-        module.exports = analyze;
+        module.exports = analyzeLegionData;
     }
     else{
-        window.analyze = analyze;
+        window.analyzeLegionData = analyzeLegionData;
     }
 })();
