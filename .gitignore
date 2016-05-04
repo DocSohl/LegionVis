@@ -1,3 +1,4 @@
 .idea
 *.pyc
 SharedData/*
+node_modules

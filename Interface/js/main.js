@@ -196,7 +196,26 @@ function switchViews(viewname){
     }
 }
 
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
+
 function fileInit(){
+    if(window.location.search.includes("?")){
+        var id = getUrlParameter("id");
+        var x = 0;
+    }
     var fileInput = d3.select("#fileInput");
     var fileSubmit = d3.select("#fileSubmit");
     fileSubmit.on("click",function(){
@@ -206,14 +225,30 @@ function fileInit(){
             var file = files[0];
             var fr = new FileReader();
             fr.onload = function(e) {
-                window.legiondata = window.analyzeLegionData(e.target.result);
-                var q = 0;
+                var data = e.target.result;
                 var vis = d3.select("#visualization");
-                vis.style("display","block");
+                vis.style("display", "block");
                 var processingForm = d3.select("#processingForm");
-                processingForm.style("display","none");
-                Init(window.legiondata.tasks, window.legiondata.names,window.legiondata.proclist);
-
+                processingForm.style("display", "none");
+                if(d3.select("#localRadio").node().checked) {
+                    window.analyzeLegionData(data, function (processedData) {
+                        window.legiondata = processedData;
+                        Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
+                    });
+                }
+                else{
+                    //post to API
+                    d3.json("/upload")
+                        .header("Content-Type", "text/plain")
+                        .post(data, function(error, response) {
+                            if (response.hasOwnProperty("id")){
+                                window.location.href = '/display.html?id=' + response.id;
+                            }
+                            else{
+                                //Error!
+                            }
+                        });
+                }
             };
             fr.readAsText(file);
 

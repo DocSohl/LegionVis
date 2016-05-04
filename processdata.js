@@ -22,7 +22,7 @@
         return "Node: " + node + " Processor: " + proc;
     };
 
-    var analyzeLegionData = function(data){
+    var analyzeLegionData = function(data,callback){
         var tasks = [];
         var taskmap = {};
         var tidnames = {};
@@ -55,7 +55,7 @@
             full_regex = new RegExp(prefix + "Prof Task Variant ([0-9]+) ([0-9]+) ([a-zA-Z0-9_<>.]+)");
             info = full_regex.exec(line);
             if(info != null){
-                tidnames[Number(info[3])] = info[4];
+                tid2vid[Number(info[3])] = info[4];
             }
             full_regex = new RegExp(prefix + "Prof Proc Desc ([a-f0-9]+) ([0-9]+)");
             info = full_regex.exec(line);
@@ -82,11 +82,12 @@
             task["proc_kind"] = procs[task["proc_id"]];
             task["proc_id"] = procPretty(task["proc_id"])
         });
-        return {
+        var retval = {
             "tasks":tasks,
             "names":names,
             "proclist":proclist
         };
+        callback(retval);
     };
 
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
