@@ -1,4 +1,5 @@
 .idea
 *.pyc
 SharedData/*
-node_modules
+node_modules/*
+JsonData/*

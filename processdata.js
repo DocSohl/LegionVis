@@ -13,12 +13,8 @@
     };
 
     var procPretty = function(proc){
-        var h = Number(proc).toString(16);
-        while(h.length < 8){
-            h = "0" + h;
-        }
-        var node = String(parseInt(h.slice(3,7),16));
-        proc = String(parseInt(h.charAt(7),16));
+        var node = parseInt(proc.slice(1,5),16);
+        proc = parseInt(proc.slice(5,proc.length),16);
         return "Node: " + node + " Processor: " + proc;
     };
 
@@ -37,7 +33,7 @@
                 var task = {
                     "task_id":Number(info[3]),
                     "func_id":Number(info[4]),
-                    "proc_id":String(parseInt(info[5],16)),
+                    "proc_id":info[5],
                     "create":Number(info[6])/1000,
                     "ready":Number(info[7])/1000,
                     "start":Number(info[8])/1000,
@@ -61,7 +57,7 @@
             info = full_regex.exec(line);
             if(info != null) {
                 var kind = Number(info[4]);
-                procs[String(parseInt(info[3],16))] = processor_kinds[kind];
+                procs[info[3]] = processor_kinds[kind];
             }
         });
         Object.keys(tidnames).forEach(function(n) {

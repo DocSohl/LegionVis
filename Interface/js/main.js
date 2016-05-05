@@ -214,45 +214,56 @@ var getUrlParameter = function getUrlParameter(sParam) {
 function fileInit(){
     if(window.location.search.includes("?")){
         var id = getUrlParameter("id");
-        var x = 0;
-    }
-    var fileInput = d3.select("#fileInput");
-    var fileSubmit = d3.select("#fileSubmit");
-    fileSubmit.on("click",function(){
-        var fi = fileInput[0][0];
-        var files = fi.files;
-        if(files.length >=1) {
-            var file = files[0];
-            var fr = new FileReader();
-            fr.onload = function(e) {
-                var data = e.target.result;
-                var vis = d3.select("#visualization");
-                vis.style("display", "block");
-                var processingForm = d3.select("#processingForm");
-                processingForm.style("display", "none");
-                if(d3.select("#localRadio").node().checked) {
-                    window.analyzeLegionData(data, function (processedData) {
-                        window.legiondata = processedData;
-                        Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
-                    });
-                }
-                else{
-                    //post to API
-                    d3.json("/upload")
-                        .header("Content-Type", "text/plain")
-                        .post(data, function(error, response) {
-                            if (response.hasOwnProperty("id")){
-                                window.location.href = '/display.html?id=' + response.id;
-                            }
-                            else{
-                                //Error!
-                            }
-                        });
-                }
-            };
-            fr.readAsText(file);
+        d3.json('/'+id+ '.json',function(error, processedData) {
 
-        }
-    });
+            var vis = d3.select("#visualization");
+            vis.style("display", "block");
+            var processingForm = d3.select("#processingForm");
+            processingForm.style("display", "none");
+            window.legiondata = processedData;
+            Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
+        });
+    }
+    else {
+        var fileInput = d3.select("#fileInput");
+        var fileSubmit = d3.select("#fileSubmit");
+        fileSubmit.on("click", function () {
+            var fi = fileInput[0][0];
+            var files = fi.files;
+            if (files.length >= 1) {
+                var file = files[0];
+                var fr = new FileReader();
+                fr.onload = function (e) {
+                    var data = e.target.result;
+                    var vis = d3.select("#visualization");
+                    vis.style("display", "block");
+                    var processingForm = d3.select("#processingForm");
+                    processingForm.style("display", "none");
+                    if (d3.select("#localRadio").node().checked) {
+                        window.analyzeLegionData(data, function (processedData) {
+                            window.legiondata = processedData;
+                            Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
+                        });
+                    }
+                    else {
+                        //post to API
+                        d3.json("/upload")
+                            .header("Content-Type", "text/plain")
+                            .post(data, function (error, response) {
+                                if (response.hasOwnProperty("id")) {
+                                    window.location.href = '/display.html?id=' + response.id;
+                                }
+                                else {
+                                    //Error!
+                                }
+                            });
+                    }
+                };
+                fr.readAsText(file);
+
+            }
+
+        });
+    }
 }
 fileInit();

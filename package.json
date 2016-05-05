@@ -1,0 +1,23 @@
+{
+  "name": "legionvis",
+  "version": "1.0.0",
+  "description": "A web-based visualization for Legion profiling results",
+  "main": "legionvis.js",
+  "dependencies": {
+    "express": "^4.13.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DocSohl/LegionVis.git"
+  },
+  "author": "Ian Sohl, Phil Cutler, and Ariel Herbert-Voss",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DocSohl/LegionVis/issues"
+  },
+  "homepage": "https://github.com/DocSohl/LegionVis#readme"
+}
