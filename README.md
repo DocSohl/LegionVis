@@ -26,10 +26,9 @@ Client:
    * [D3.tip](https://github.com/Caged/d3-tip)
 
 ### Operation
-Running the web server is as easy as downloading and extracting this repository, then running
-`npm install`, then 
-`node legionvis.js`
-then navigating to the IP of the server, or if on the same machine, the IP `localhost`.
+After cloning the repository, install packages with `npm install`.
+To run the server, type `node legionvis.js`
+To view the website, navigate to the IP of the server, or if on the same machine, the IP `localhost`.
 
 The web server automatically attempts to launch using the default HTTP port 80, but if another service is using the port, or if running without root privileges on a Unix machine, will attempt to launch using port 8080.
 
