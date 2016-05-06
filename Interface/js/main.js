@@ -215,11 +215,16 @@ function fileInit(){
     if(window.location.search.includes("?")){
         var id = getUrlParameter("id");
         d3.json('/'+id+ '.json',function(error, processedData) {
-
+            if(error){
+                console.log(error);
+            }
             var vis = d3.select("#visualization");
             vis.style("display", "block");
             var processingForm = d3.select("#processingForm");
             processingForm.style("display", "none");
+
+            var sharing = d3.select("#sharing");
+            sharing.style("display", "none");
             window.legiondata = processedData;
             Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
         });
@@ -242,6 +247,19 @@ function fileInit(){
                     if (d3.select("#localRadio").node().checked) {
                         window.analyzeLegionData(data, function (processedData) {
                             window.legiondata = processedData;
+                            var shareButton = d3.select("#shareButton");
+                            shareButton.on("click",function(){
+                                d3.json("/upload")
+                                    .header("Content-Type", "application/json")
+                                    .post(JSON.stringify(window.legiondata), function (error, response) {
+                                        if (response.hasOwnProperty("id")) {
+                                            window.location.href = '/display.html?id=' + response.id;
+                                        }
+                                        else {
+                                            //Error!
+                                        }
+                                    });
+                            });
                             Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
                         });
                     }

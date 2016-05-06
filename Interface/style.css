@@ -197,3 +197,38 @@ text {
     stroke: none;
     stroke-width: 1.5px;
 }
+#histadjust {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 2px;
+    float:left;
+}
+
+#sharing label {
+    font-size: 18px;
+    float:left;
+    width:100px;
+    margin:2px;
+    background-color:#EFEFEF;
+    border-radius:4px;
+    border:1px solid #D0D0D0;
+    overflow:auto;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#sharing label span {
+    text-align:center;
+    font-size: 18px;
+    padding:5px 0px;
+    display:block;
+}
+
+#sharing label input {
+    position:absolute;
+    top:-20px;
+}

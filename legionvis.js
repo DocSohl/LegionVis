@@ -24,7 +24,7 @@ app.post('/upload',function(req,res){
             });
         }
         else if (req.headers["content-type"].includes("application/json")){
-            fs.writeFile("/JsonData/"+guid + ".json",req.body,function(err){
+            fs.writeFile("JsonData/"+guid + ".json",JSON.stringify(req.body),function(err){
                 res.end(JSON.stringify({"id":guid.toString()}));
             });
         }
