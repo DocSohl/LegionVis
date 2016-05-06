@@ -40,4 +40,4 @@ app.get('/js/processdata.js',function(req,res){
         res.end(data);
     });
 });
-app.listen(8080);
+app.listen(80 || 8080);

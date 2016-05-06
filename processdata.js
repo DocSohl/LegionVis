@@ -13,6 +13,9 @@
     };
 
     var procPretty = function(proc){
+        while(proc.length <= 6){
+            proc = "0" + proc;
+        }
         var node = parseInt(proc.slice(1,5),16);
         proc = parseInt(proc.slice(5,proc.length),16);
         return "Node: " + node + " Processor: " + proc;
