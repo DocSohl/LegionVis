@@ -2,39 +2,12 @@
 var histview, mainview, graphview, summaryview;
 
 
-function Concurrency(data){
-    this.rawData = data;
-    this.parsedData = {};
-    this.dataIndex = {};
-    this.maxStacks = {};
-    this.rawData.sort(function(a,b){return a.start - b.start;});
-    // Initial Parse
-    var started = [];
-    for(var i = 0; i < this.rawData.length; ++i){
-        var cur = this.rawData[i];
-        cur.duration = Math.round(cur.stop - cur.start);
-        var proc = cur.proc_id;
-        if(this.maxStacks[proc] == undefined) this.maxStacks[proc] = 1;
-        var count = 1;
-        for(var j = 0; j < started.length; ++j){
-            if(started[j].stop < cur.start){
-                started.splice(j--,1);
-            }
-            else if(started[j].proc_id == proc) count++;
-        }
-        cur.stack = count;
-        this.maxStacks[proc] = Math.max(this.maxStacks[proc],count);
-        this.parsedData[cur.task_id] = started.slice(0);
-        this.dataIndex[cur.task_id] = i;
-        started = started.slice(0);
-        for(var j = 0; j < started.length; ++j){
-            if(this.parsedData.hasOwnProperty(started[j].task_id) && !(cur in this.parsedData[started[j].task_id])){
-                //console.log("added");
-                this.parsedData[started[j].task_id].push(cur);
-            }
-        }
-        started.push(cur);
-    }
+function Concurrency(timedata,concurrencydata){
+    this.rawData = timedata;
+    this.parsedData = concurrencydata.parsedData;
+    this.dataIndex = concurrencydata.dataIndex;
+    this.maxStacks = concurrencydata.maxStacks;
+
 
     this.findClosest = function(t){
         var high = this.rawData.length - 1;
@@ -121,8 +94,12 @@ function Concurrency(data){
 /**
  * Loads data, prepares and populates all D3 components. Only run once
  */
-function Init(timedata, names,procs){// Load all task information from the server
-    var concurrent = new Concurrency(timedata);
+function Init(){// Load all task information from the server
+
+    var timedata = window.legiondata.tasks;
+    var names = window.legiondata.names;
+    var procs = window.legiondata.proclist;
+    var concurrent = new Concurrency(timedata,window.legiondata.concurrencyData);
     var w = window,
         d = document,
         e = d.documentElement,
@@ -211,6 +188,18 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
+function postToApi(){
+    d3.json("/upload")
+        .header("Content-Type", "text/plain")
+        .post(data, function (error, response) {
+            if (response.hasOwnProperty("id")) {
+                window.location.href = '/display.html?id=' + response.id;
+            }
+            else {
+                //Error!
+            }
+        });
+}
 function fileInit(){
     if(window.location.search.includes("?")){
         var id = getUrlParameter("id");
@@ -245,36 +234,20 @@ function fileInit(){
                     var processingForm = d3.select("#processingForm");
                     processingForm.style("display", "none");
                     if (d3.select("#localRadio").node().checked) {
-                        window.analyzeLegionData(data, function (processedData) {
-                            window.legiondata = processedData;
-                            var shareButton = d3.select("#shareButton");
-                            shareButton.on("click",function(){
-                                d3.json("/upload")
-                                    .header("Content-Type", "application/json")
-                                    .post(JSON.stringify(window.legiondata), function (error, response) {
-                                        if (response.hasOwnProperty("id")) {
-                                            window.location.href = '/display.html?id=' + response.id;
-                                        }
-                                        else {
-                                            //Error!
-                                        }
-                                    });
+                        window.analyzeLegionData(data, function (error,processedData) {
+                            window.GetConcurrencyData(data,function(err,concurrencyData){
+                                processedData.concurrencyData = concurrencyData;
+                                window.legiondata = processedData;
+                                var shareButton = d3.select("#shareButton");
+                                shareButton.on("click",function(){
+                                    postToApi()
+                                });
+                                Init();
                             });
-                            Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
                         });
                     }
                     else {
-                        //post to API
-                        d3.json("/upload")
-                            .header("Content-Type", "text/plain")
-                            .post(data, function (error, response) {
-                                if (response.hasOwnProperty("id")) {
-                                    window.location.href = '/display.html?id=' + response.id;
-                                }
-                                else {
-                                    //Error!
-                                }
-                            });
+                        postToApi();
                     }
                 };
                 fr.readAsText(file);

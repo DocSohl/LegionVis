@@ -81,12 +81,15 @@
             task["proc_kind"] = procs[task["proc_id"]];
             task["proc_id"] = procPretty(task["proc_id"])
         });
+        tasks.sort(function (a, b) {
+            return a.start - b.start;
+        });
         var retval = {
             "tasks":tasks,
             "names":names,
             "proclist":proclist
         };
-        callback(retval);
+        callback(null,retval);
     };
 
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined'){
