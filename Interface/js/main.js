@@ -143,7 +143,7 @@ function resizeViews(){
     d3.select("#xAxis").select("g").remove();
 
 
-    Init(window.legiondata.tasks, window.legiondata.names,window.legiondata.proclist);
+    Init();
 }
 
 d3.selection.prototype.moveToFront = function() {
@@ -188,7 +188,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
-function postToApi(){
+function postToApi(data){
     d3.json("/upload")
         .header("Content-Type", "text/plain")
         .post(data, function (error, response) {
@@ -215,7 +215,7 @@ function fileInit(){
             var sharing = d3.select("#sharing");
             sharing.style("display", "none");
             window.legiondata = processedData;
-            Init(window.legiondata.tasks, window.legiondata.names, window.legiondata.proclist);
+            Init();
         });
     }
     else {
@@ -235,19 +235,19 @@ function fileInit(){
                     processingForm.style("display", "none");
                     if (d3.select("#localRadio").node().checked) {
                         window.analyzeLegionData(data, function (error,processedData) {
-                            window.GetConcurrencyData(data,function(err,concurrencyData){
+                            window.GetConcurrencyData(processedData.tasks,function(err,concurrencyData){
                                 processedData.concurrencyData = concurrencyData;
                                 window.legiondata = processedData;
                                 var shareButton = d3.select("#shareButton");
                                 shareButton.on("click",function(){
-                                    postToApi()
+                                    postToApi(window.legiondata);
                                 });
                                 Init();
                             });
                         });
                     }
                     else {
-                        postToApi();
+                        postToApi(data);
                     }
                 };
                 fr.readAsText(file);

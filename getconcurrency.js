@@ -26,7 +26,7 @@ function GetConcurrencyData(rawData,callback) {
         started = started.slice(0);
         for (var j = 0; j < started.length; ++j) {
             if (parsedData.hasOwnProperty(started[j].task_id) && !(cur in parsedData[started[j].task_id])) {
-                //console.log("added");
+                console.log("added");
                 parsedData[started[j].task_id].push(cur);
             }
         }
